@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURA | Precision Fit & Curated Fashion</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="#" class="brand-logo">AURA</a>
+            <nav class="nav-links">
+                <a href="#collection">Collection</a>
+                <a href="#studio">Interactive Studio</a>
+                <a href="#vip">SMS Updates</a>
+            </nav>
+            <div class="nav-actions">
+                <button class="icon-btn" aria-label="Privacy Settings" id="privacy-settings-btn">🔒 Privacy</button>
+                <button class="cart-btn" aria-label="Shopping Cart">Cart (<span id="cart-count">0</span>)</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Banner -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <span class="tagline">Tailored to perfection</span>
+            <h1>Fashion that actually fits your body.</h1>
+            <p>Say goodbye to sizing guesswork and poor quality. Discover curated style powered by interactive 3D sizing visualization.</p>
+            <a href="#studio" class="cta-btn">Try Smart Visualizer</a>
+        </div>
+    </section>
+
+    <!-- Main Content Grid: Catalog & Studio -->
+    <main class="main-layout" id="collection">
+        <!-- Left: Product Showcase -->
+        <section class="product-gallery">
+            <h2>Curated Collection</h2>
+            <div class="product-grid" id="product-list">
+                <!-- Products dynamically rendered or static fallback -->
+                <article class="product-card" data-id="1" data-name="Architectural Wool Blazer" data-price="180">
+                    <div class="card-img-wrap">
+                        <div class="placeholder-img jacket-img"></div>
+                    </div>
+                    <div class="card-details">
+                        <h3>Architectural Wool Blazer</h3>
+                        <p class="price">$180.00</p>
+                        <button class="select-product-btn" onclick="selectProduct('Architectural Wool Blazer', 180)">Select to Fit</button>
+                    </div>
+                </article>
+
+                <article class="product-card" data-id="2" data-name="Structured Linen Trousers" data-price="120">
+                    <div class="card-img-wrap">
+                        <div class="placeholder-img pants-img"></div>
+                    </div>
+                    <div class="card-details">
+                        <h3>Structured Linen Trousers</h3>
+                        <p class="price">$120.00</p>
+                        <button class="select-product-btn" onclick="selectProduct('Structured Linen Trousers', 120)">Select to Fit</button>
+                    </div>
+                </article>
+
+                <article class="product-card" data-id="3" data-name="Silk Minimalist Dress" data-price="210">
+                    <div class="card-img-wrap">
+                        <div class="placeholder-img dress-img"></div>
+                    </div>
+                    <div class="card-details">
+                        <h3>Silk Minimalist Dress</h3>
+                        <p class="price">$210.00</p>
+                        <button class="select-product-btn" onclick="selectProduct('Silk Minimalist Dress', 210)">Select to Fit</button>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- Right: Interactive AI Mannequin & Sizing Studio -->
+        <section class="studio-container" id="studio">
+            <div class="studio-header">
+                <h2>Precision Fit Studio</h2>
+                <p>Customize your virtual mannequin or select a standard sizing profile.</p>
+            </div>
+
+            <!-- Privacy Choice Toggle -->
+            <div class="data-privacy-card">
+                <div class="privacy-toggle-group">
+                    <label class="switch">
+                        <input type="checkbox" id="privacy-toggle" checked onchange="toggleCustomDataMode()">
+                        <span class="slider round"></span>
+                    </label>
+                    <div class="privacy-label">
+                        <strong>Use Custom Body Measurements</strong>
+                        <p class="subtext">Data stays local to your browser session & protected.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="studio-workspace">
+                <!-- Mannequin Canvas Viewpoint -->
+                <div class="mannequin-viewport">
+                    <div class="avatar-frame">
+                        <div id="ai-mannequin" class="mannequin-graphic">
+                            <div class="mannequin-head"></div>
+                            <div class="mannequin-torso" id="avatar-torso"></div>
+                            <div class="mannequin-waist" id="avatar-waist"></div>
+                            <div class="mannequin-legs" id="avatar-legs"></div>
+                        </div>
+                    </div>
+                    <div class="fit-verdict-badge" id="fit-verdict">
+                        <span>Selected Item: <strong>Architectural Wool Blazer</strong></span>
+                        <div class="recommended-size-tag">Recommended Size: <strong id="recommended-size">M</strong></div>
+                        <p id="fit-latency-note" class="latency-indicator">⚡ Size computed in 12ms (Local Zero-Latency Engine)</p>
+                    </div>
+                </div>
+
+                <!-- Customizer / Standard Size Controls -->
+                <div class="controls-panel">
+                    <!-- Dynamic Controls: Custom Measurements -->
+                    <form id="custom-measurement-form" class="measurement-controls">
+                        <h3>Body Calibration</h3>
+                        <div class="control-group">
+                            <label for="height-input">Height: <span id="height-val">175</span> cm</label>
+                            <input type="range" id="height-input" min="140" max="210" value="175" oninput="updateAvatar()">
+                        </div>
+                        <div class="control-group">
+                            <label for="weight-input">Weight: <span id="weight-val">70</span> kg</label>
+                            <input type="range" id="weight-input" min="40" max="140" value="70" oninput="updateAvatar()">
+                        </div>
+                        <div class="control-group">
+                            <label for="chest-input">Chest / Bust: <span id="chest-val">96</span> cm</label>
+                            <input type="range" id="chest-input" min="70" max="140" value="96" oninput="updateAvatar()">
+                        </div>
+                        <div class="control-group">
+                            <label for="waist-input">Waist: <span id="waist-val">80</span> cm</label>
+                            <input type="range" id="waist-input" min="55" max="130" value="80" oninput="updateAvatar()">
+                        </div>
+                    </form>
+
+                    <!-- Standard Sizing Fallback (shown when custom data toggled off) -->
+                    <div id="standard-sizing-panel" class="standard-controls hidden">
+                        <h3>Standard Sizing Selector</h3>
+                        <p class="subtext">Select your usual retail size without entering body dimensions.</p>
+                        <div class="size-btn-group">
+                            <button class="size-btn" onclick="selectStandardSize('XS')">XS</button>
+                            <button class="size-btn" onclick="selectStandardSize('S')">S</button>
+                            <button class="size-btn active" onclick="selectStandardSize('M')">M</button>
+                            <button class="size-btn" onclick="selectStandardSize('L')">L</button>
+                            <button class="size-btn" onclick="selectStandardSize('XL')">XL</button>
+                            <button class="size-btn" onclick="selectStandardSize('XXL')">XXL</button>
+                        </div>
+                    </div>
+
+                    <button class="add-cart-action-btn" onclick="addToCart()">Add Perfect Fit to Cart</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- VIP / SMS & Email Registration Section -->
+    <section class="vip-section" id="vip">
+        <div class="vip-card">
+            <h2>Join the AURA Insider Club</h2>
+            <p>Get instant drop alerts, sizing recommendations, and VIP offers via SMS or Email.</p>
+            <form id="signup-form" onsubmit="handleSignup(event)">
+                <div class="input-tabs">
+                    <button type="button" class="tab-btn active" id="tab-phone" onclick="switchContactMode('phone')">Phone (SMS)</button>
+                    <button type="button" class="tab-btn" id="tab-email" onclick="switchContactMode('email')">Gmail / Email</button>
+                </div>
+                <div class="form-input-container">
+                    <input type="tel" id="contact-input" placeholder="Enter mobile phone (+1...)" required>
+                    <button type="submit" class="submit-btn">Subscribe</button>
+                </div>
+                <p id="form-feedback" class="feedback-msg"></p>
+                <span class="security-badge">🔒 Your contact details are securely encrypted (AES-256 compliant) and never sold.</span>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <p>&copy; 2026 AURA Fashion & Human-Centered Design Lab. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#">Security Protocol</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Sizing Science</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
