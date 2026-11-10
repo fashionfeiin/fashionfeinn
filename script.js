@@ -1,4 +1,4 @@
-// AURA Application State & HCD Logic Module
+// FF Application State & HCD Logic Module
 
 let selectedProduct = "Architectural Wool Blazer";
 let currentContactMode = "phone"; // 'phone' or 'email'
