@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> FF | Precision Fit & Curated Fashion</title>
+    <title>FF | Precision Fit & Curated Fashion</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
 </head>
 <body>
+
     <!-- Navigation Bar -->
     <header class="navbar">
         <div class="nav-container">
@@ -19,6 +20,7 @@
             </nav>
             <div class="nav-actions">
                 <button class="icon-btn" aria-label="Privacy Settings" id="privacy-settings-btn">🔒 Privacy</button>
+                <button class="icon-btn" id="login-open-btn" onclick="openLoginModal()">Log In</button>
                 <button class="cart-btn" aria-label="Shopping Cart">Cart (<span id="cart-count">0</span>)</button>
             </div>
         </div>
@@ -40,7 +42,6 @@
         <section class="product-gallery">
             <h2>Curated Collection</h2>
             <div class="product-grid" id="product-list">
-                <!-- Products dynamically rendered or static fallback -->
                 <article class="product-card" data-id="1" data-name="Architectural Wool Blazer" data-price="180">
                     <div class="card-img-wrap">
                         <div class="placeholder-img jacket-img"></div>
@@ -190,6 +191,28 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
-</body>
-</html>
+    <!-- Log In / Account Modal -->
+    <div id="login-modal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <button class="modal-close-btn" onclick="closeLoginModal()">&times;</button>
+            <h2 id="auth-title">Welcome Back</h2>
+            <p class="auth-subtext" id="auth-subtext">Log in to save your body calibration profiles & orders.</p>
+            
+            <form id="auth-form" onsubmit="handleAuthSubmit(event)">
+                <div class="form-group">
+                    <label for="auth-email">Email Address</label>
+                    <input type="email" id="auth-email" placeholder="name@example.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="auth-password">Password</label>
+                    <input type="password" id="auth-password" placeholder="••••••••" required>
+                </div>
+                
+                <button type="submit" class="submit-btn full-width" id="auth-submit-btn">Log In</button>
+            </form>
+            
+            <div class="auth-toggle-note
+
+
+  
