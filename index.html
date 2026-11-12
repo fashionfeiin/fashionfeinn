@@ -59,7 +59,7 @@
                     <div class="card-details">
                         <h3>Structured Linen Trousers</h3>
                         <p class="price">$120.00</p>
-                        <button class="select-product-btn" onclick="selectProduct('Structured Linen Trousers', 120)">Select to Fit</button>
+                        <button class="select-product-btn" onclick="selectProduct('Structured Linen Trousers', 120)"Select to Fit button  
                     </div>
                 </article>
 
@@ -126,7 +126,7 @@
                         </div>
                         <div class="control-group">
                             <label for="weight-input">Weight: <span id="weight-val">70</span> kg</label>
-                            <input type="range" id="weight-input" min="40" max="140" value="70" oninput="updateAvatar()">
+                            <input type="range" id="weight-input" min="40" max="140" value="70" oninput="updateAvatar()"
                         </div>
                         <div class="control-group">
                             <label for="chest-input">Chest / Bust: <span id="chest-val">96</span> cm</label>
@@ -152,8 +152,8 @@
                         </div>
                     </div>
 
-                    <button class="add-cart-action-btn" onclick="addToCart()">Add Perfect Fit to Cart</button>
-                </div>
+                    <button> class="add-cart-action-btn" onclick="addToCart()"Add Perfect Fit to Cart</button>   
+             </div>
             </div>
         </section>
     </main>
@@ -166,7 +166,7 @@
             <form id="signup-form" onsubmit="handleSignup(event)">
                 <div class="input-tabs">
                     <button type="button" class="tab-btn active" id="tab-phone" onclick="switchContactMode('phone')">Phone (SMS)</button>
-                    <button type="button" class="tab-btn" id="tab-email" onclick="switchContactMode('email')">Gmail / Email</button>
+                    <button type="button" class="tab-btn" id="tab-email" onclick="switchContactMode('email')"Gmail / Email</button>
                 </div>
                 <div class="form-input-container">
                     <input type="tel" id="contact-input" placeholder="Enter mobile phone (+1...)" required>
