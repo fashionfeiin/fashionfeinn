@@ -3,312 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AURA | Sign In & Sizing Profile</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-        }
-
-        body {
-            background-color: #f7f6f2;
-            color: #1a1a1a;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .login-container {
-            background-color: #ffffff;
-            width: 100%;
-            max-width: 420px;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-        }
-
-        .brand-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .brand-header h1 {
-            font-size: 28px;
-            letter-spacing: 6px;
-            font-weight: 400;
-            margin-bottom: 8px;
-        }
-
-        .brand-header p {
-            font-size: 13px;
-            color: #666;
-        }
-
-        .auth-tabs {
-            display: flex;
-            border-bottom: 1px solid #e0e0e0;
-            margin-bottom: 24px;
-        }
-
-        .tab-btn {
-            flex: 1;
-            background: none;
-            border: none;
-            padding: 12px;
-            font-size: 14px;
-            color: #888;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border-bottom: 2px solid transparent;
-        }
-
-        .tab-btn.active {
-            color: #1a1a1a;
-            font-weight: 600;
-            border-bottom: 2px solid #1a1a1a;
-        }
-
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        label {
-            display: block;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-            color: #444;
-        }
-
-        input[type="email"],
-        input[type="tel"],
-        input[type="password"] {
-            width: 100%;
-            padding: 12px 14px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 14px;
-            transition: border-color 0.2s;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: #1a1a1a;
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            margin-bottom: 24px;
-            font-size: 12px;
-            color: #555;
-            line-height: 1.4;
-        }
-
-        .checkbox-group input {
-            margin-top: 2px;
-        }
-
-        .login-btn {
-            width: 100%;
-            padding: 14px;
-            background-color: #1a1a1a;
-            color: #ffffff;
-            border: none;
-            border-radius: 4px;
-            font-size: 14px;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-        }
-
-        .login-btn:hover {
-            background-color: #333333;
-        }
-
-        .login-btn:disabled {
-            background-color: #888888;
-            cursor: not-allowed;
-        }
-
-        .status-message {
-            margin-top: 16px;
-            padding: 12px;
-            border-radius: 4px;
-            font-size: 13px;
-            text-align: center;
-            display: none;
-        }
-
-        .status-success {
-            background-color: #eef7f0;
-            color: #1e6b34;
-            border: 1px solid #c3e6cb;
-        }
-
-        .status-error {
-            background-color: #fdf2f2;
-            color: #9b1c1c;
-            border: 1px solid #f8b4b4;
-        }
-
-        .guest-link {
-            display: block;
-            text-align: center;
-            margin-top: 20px;
-            font-size: 13px;
-            color: #666;
-            text-decoration: none;
-        }
-
-        .guest-link:hover {
-            text-decoration: underline;
-            color: #1a1a1a;
-        }
-    </style>
+    <title> FF | Precision Fit & Curated Fashion</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
 </head>
 <body>
-
-    <div class="login-container">
-        <div class="brand-header">
-            <h1>AURA</h1>
-            <p>Sign in to save your sizing profile</p>
+    <!-- Navigation Bar -->
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="#" class="brand-logo">FF</a>
+            <nav class="nav-links">
+                <a href="#collection">Collection</a>
+                <a href="#studio">Interactive Studio</a>
+                <a href="#vip">SMS Updates</a>
+            </nav>
+            <div class="nav-actions">
+                <button class="icon-btn" aria-label="Privacy Settings" id="privacy-settings-btn">🔒 Privacy</button>
+                <button class="cart-btn" aria-label="Shopping Cart">Cart (<span id="cart-count">0</span>)</button>
+            </div>
         </div>
+    </header>
 
-        <div class="auth-tabs">
-            <button type="button" class="tab-btn active" id="emailTab">Email / Gmail</button>
-            <button type="button" class="tab-btn" id="phoneTab">Phone / SMS</button>
+    <!-- Hero Banner -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <span class="tagline">Tailored to perfection</span>
+            <h1>Fashion that actually fits your body.</h1>
+            <p>Say goodbye to sizing guesswork and poor quality. Discover curated style powered by interactive 3D sizing visualization.</p>
+            <a href="#studio" class="cta-btn">Try Smart Visualizer</a>
         </div>
+    </section>
 
-        <form id="loginForm">
-            <div class="form-group" id="emailGroup">
-                <label for="emailInput">Email Address</label>
-                <input type="email" id="emailInput" placeholder="you@gmail.com" required>
+    <!-- Main Content Grid: Catalog & Studio -->
+    <main class="main-layout" id="collection">
+        <!-- Left: Product Showcase -->
+        <section class="product-gallery">
+            <h2>Curated Collection</h2>
+            <div class="product-grid" id="product-list">
+                <!-- Products dynamically rendered or static fallback -->
+                <article class="product-card" data-id="1" data-name="Architectural Wool Blazer" data-price="180">
+                    <div class="card-img-wrap">
+                        <div class="placeholder-img jacket-img"></div>
+                    </div>
+                    <div class="card-details">
+                        <h3>Architectural Wool Blazer</h3>
+                        <p class="price">$180.00</p>
+                        <button class="select-product-btn" onclick="selectProduct('Architectural Wool Blazer', 180)">Select to Fit</button>
+                    </div>
+                </article>
+
+                <article class="product-card" data-id="2" data-name="Structured Linen Trousers" data-price="120">
+                    <div class="card-img-wrap">
+                        <div class="placeholder-img pants-img"></div>
+                    </div>
+                    <div class="card-details">
+                        <h3>Structured Linen Trousers</h3>
+                        <p class="price">$120.00</p>
+                        <button class="select-product-btn" onclick="selectProduct('Structured Linen Trousers', 120)">Select to Fit</button>
+                    </div>
+                </article>
+
+                <article class="product-card" data-id="3" data-name="Silk Minimalist Dress" data-price="210">
+                    <div class="card-img-wrap">
+                        <div class="placeholder-img dress-img"></div>
+                    </div>
+                    <div class="card-details">
+                        <h3>Silk Minimalist Dress</h3>
+                        <p class="price">$210.00</p>
+                        <button class="select-product-btn" onclick="selectProduct('Silk Minimalist Dress', 210)">Select to Fit</button>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- Right: Interactive AI Mannequin & Sizing Studio -->
+        <section class="studio-container" id="studio">
+            <div class="studio-header">
+                <h2>Precision Fit Studio</h2>
+                <p>Customize your virtual mannequin or select a standard sizing profile.</p>
             </div>
 
-            <div class="form-group" id="phoneGroup" style="display: none;">
-                <label for="phoneInput">Phone Number</label>
-                <input type="tel" id="phoneInput" placeholder="+1 (555) 000-0000">
+            <!-- Privacy Choice Toggle -->
+            <div class="data-privacy-card">
+                <div class="privacy-toggle-group">
+                    <label class="switch">
+                        <input type="checkbox" id="privacy-toggle" checked onchange="toggleCustomDataMode()">
+                        <span class="slider round"></span>
+                    </label>
+                    <div class="privacy-label">
+                        <strong>Use Custom Body Measurements</strong>
+                        <p class="subtext">Data stays local to your browser session & protected.</p>
+                    </div>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label for="passwordInput">Password</label>
-                <input type="password" id="passwordInput" placeholder="Enter your password" required>
-            </div>
+            <div class="studio-workspace">
+                <!-- Mannequin Canvas Viewpoint -->
+                <div class="mannequin-viewport">
+                    <div class="avatar-frame">
+                        <div id="ai-mannequin" class="mannequin-graphic">
+                            <div class="mannequin-head"></div>
+                            <div class="mannequin-torso" id="avatar-torso"></div>
+                            <div class="mannequin-waist" id="avatar-waist"></div>
+                            <div class="mannequin-legs" id="avatar-legs"></div>
+                        </div>
+                    </div>
+                    <div class="fit-verdict-badge" id="fit-verdict">
+                        <span>Selected Item: <strong>Architectural Wool Blazer</strong></span>
+                        <div class="recommended-size-tag">Recommended Size: <strong id="recommended-size">M</strong></div>
+                        <p id="fit-latency-note" class="latency-indicator">⚡ Size computed in 12ms (Local Zero-Latency Engine)</p>
+                    </div>
+                </div>
 
-            <div class="checkbox-group">
-                <input type="checkbox" id="smsOptIn" checked>
-                <label for="smsOptIn" style="text-transform: none; letter-spacing: 0; margin: 0;">
-                    Opt-in to SMS notifications for sizing updates and new collections.
-                </label>
-            </div>
-
-            <button type="submit" class="login-btn" id="submitBtn">Sign In</button>
-        </form>
-
-        <div id="statusMessage" class="status-message"></div>
-
-        <a href="#guest" class="guest-link" id="guestLink">Continue as Guest (Standard Sizing)</a>
-    </div>
-
-      });
-
-        phoneTab.addEventListener('click', () => {    
-            currentMethod = 'phone';
-            phoneTab.classList.add('active');
-            emailTab.classList.remove('active');
-            phoneGroup.style.display = 'block';
-            emailGroup.style.display = 'none';
-            phoneInput.required = true;
-            emailInput.required = false;
-        });
-
-        document.getElementById('loginForm').addEventListener('submit', async function(event) {
-            event.preventDefault();
-
-            const submitBtn = document.getElementById('submitBtn');
-            const password = document.getElementById('passwordInput').value;
-            const smsOptIn = document.getElementById('smsOptIn').checked;
-            
-            const identifier = currentMethod === 'email' 
-                ? emailInput.value.trim() 
-                : phoneInput.value.trim();
-
-            if (password.length < 6) {
-                showStatus('Password must be at least 6 characters long.', 'error');
-                return;
-            }
-
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Connecting to Supabase...';
-
-            try {
-                if (supabaseClient) {
-                    if (currentMethod === 'email') {
-                        const { error } = await supabaseClient.auth.signInWithPassword({
-                            email: identifier,
-                            password: password
-                        });
-                        if (error) throw error;
-                    } else {
-                        const { error } = await supabaseClient.auth.signInWithOtp({
-                            phone: identifier
-                        });
-                        if (error) throw error;
-                    }
-
-                    const { error: dbError } = await supabaseClient
-                        .from('user_profiles')
-                        .upsert({
-                            identifier: identifier,
-                            auth_method: currentMethod,
-                            sms_opt_in: smsOptIn,
-                            updated_at: new Date()
-                        }, { onConflict: 'identifier' });
-
-                    if (dbError) console.warn('Database profile sync note:', dbError.message);
-
-                } else {
-                    await new Promise(resolve => setTimeout(resolve, 800));
-                    localStorage.setItem('auraUserSession', JSON.stringify({
-                        user: identifier,
-                        method: currentMethod,
-                        smsSubscribed: smsOptIn
-                    }));
-                }
-
-                showStatus(`Welcome, ${identifier}! Profile synced successfully.`, 'success');
-
-            } catch (err) {
-                showStatus(err.message || 'Authentication error. Please check your Supabase credentials.', 'error');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Sign In';
-            }
-        });
-
-        document.getElementById('guestLink').addEventListener('click', function(event) {
-            event.preventDefault();
-            localStorage.removeItem('auraUserSession');
-            showStatus('Continuing as Guest. Standard sizing selected without saving account data.', 'success');
-        });
-
-        function showStatus(message, type) {
-            const statusMessage = document.getElementById('statusMessage');
-            statusMessage.textContent = message;
-            statusMessage.className = 'status-message ' + (type === 'success' ? 'status-success' : 'status-error');
-            statusMessage.style.display = 'block';
-        }
-
-
+                <!-- Customizer / Standard Size Controls -->
+                <div class="controls-panel">
+                    <!-- Dynamic Controls: Custom Measurements -->
+                    <form id="custom-measurement-form" class="measurement-controls">
+                        <h3>Body Calibration</h3>
+                        <div class="control-group">
+                            <label for="height-input">Height: <span id="height-val">175</span> cm</label>
+                            <input type="range" id="height-input" min="140" max="210" value="175" oninput="updateAvatar()">
+                        </div>
+                        <div class="control-group">
+                            <label for="weight-input">Weight: <span id="weight-val">70</span> kg</label>
+                            <input type="range" id="weight-input" min="40" max="140" value="70" oninput="updateAvatar()">
+                        </div>
                         <div class="control-group">
                             <label for="chest-input">Chest / Bust: <span id="chest-val">96</span> cm</label>
                             <input type="range" id="chest-input" min="70" max="140" value="96" oninput="updateAvatar()">
@@ -371,32 +190,6 @@
         </div>
     </footer>
 
-    <!-- Log In / Account Modal -->
-    <div id="login-modal" class="modal-overlay hidden">
-        <div class="modal-card">
-            <button class="modal-close-btn" onclick="closeLoginModal()">&times;</button>
-            <h2 id="auth-title">Welcome Back</h2>
-            <p class="auth-subtext" id="auth-subtext">Log in to save your body calibration profiles & orders.</p>
-            
-            <form id="auth-form" onsubmit="handleAuthSubmit(event)">
-                <div class="form-group">
-                    <label for="auth-email">Email Address</label>
-                    <input type="email" id="auth-email" placeholder="name@example.com" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="auth-password">Password</label>
-                    <input type="password" id="auth-password" placeholder="••••••••" required>
-                </div>
-                
-                <button type="submit" class="submit-btn full-width" id="auth-submit-btn">Log In</button>
-            </form>
-            
-            <div class="auth-toggle-note   
-
-                    </script>
+    <script src="script.js"></script>
 </body>
-</html>
-
-
-  
+</html>   
