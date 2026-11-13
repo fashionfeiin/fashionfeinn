@@ -11,7 +11,7 @@
     <!-- Navigation Bar -->
     <header class="navbar">
         <div class="nav-container">
-            <a href="#" class="brand-logo">FF</a> 
+            <a href="#" class="brand-logo">FF</a>
             <nav class="nav-links">
                 <a href="#collection">Collection</a>
                 <a href="#studio">Interactive Studio</a>
@@ -47,8 +47,8 @@
                     </div>
                     <div class="card-details">
                         <h3>Architectural Wool Blazer</h3>
-                        <p class="price">$180.00</p> 
-                        <button class="select-product-btn" onclick="selectProduct('Architectural Wool Blazer', 180)">Select to Fit</button> 
+                        <p class="price">$180.00</p>
+                        <button class="select-product-btn" onclick="selectProduct('Architectural Wool Blazer', 180)">Select to Fit</button>
                     </div>
                 </article>
 
@@ -59,8 +59,8 @@
                     <div class="card-details">
                         <h3>Structured Linen Trousers</h3>
                         <p class="price">$120.00</p>
-                        <button class="select-product-btn" onclick="selectProduct('Structured Linen Trousers', 120)"Select to Fit button  
-                    div>  
+                        <button class="select-product-btn" onclick="selectProduct('Structured Linen Trousers', 120)">Select to Fit</button>
+                    </div>
                 </article>
 
                 <article class="product-card" data-id="3" data-name="Silk Minimalist Dress" data-price="210">
@@ -70,7 +70,7 @@
                     <div class="card-details">
                         <h3>Silk Minimalist Dress</h3>
                         <p class="price">$210.00</p>
-                        <button class="select-product-btn" onclick="selectProduct('Silk Minimalist Dress', 210)"Select to Fit"</button> 
+                        <button class="select-product-btn" onclick="selectProduct('Silk Minimalist Dress', 210)">Select to Fit</button>
                     </div>
                 </article>
             </div>
@@ -126,7 +126,7 @@
                         </div>
                         <div class="control-group">
                             <label for="weight-input">Weight: <span id="weight-val">70</span> kg</label>
-                            <input type="range" id="weight-input" min="40" max="140" value="70" oninput="updateAvatar()"
+                            <input type="range" id="weight-input" min="40" max="140" value="70" oninput="updateAvatar()">
                         </div>
                         <div class="control-group">
                             <label for="chest-input">Chest / Bust: <span id="chest-val">96</span> cm</label>
@@ -152,8 +152,8 @@
                         </div>
                     </div>
 
-                    <button> class="add-cart-action-btn" onclick="addToCart()"Add Perfect Fit to Cart</button>   
-             </div>
+                    <button class="add-cart-action-btn" onclick="addToCart()">Add Perfect Fit to Cart</button>
+                </div>
             </div>
         </section>
     </main>
@@ -165,13 +165,9 @@
             <p>Get instant drop alerts, sizing recommendations, and VIP offers via SMS or Email.</p>
             <form id="signup-form" onsubmit="handleSignup(event)">
                 <div class="input-tabs">
-
-                   <button type="button" class="tab-btn active" id="tab-phone" onclick="switchContactMode('phone')">Phone (SMS)</button>
+                    <button type="button" class="tab-btn active" id="tab-phone" onclick="switchContactMode('phone')">Phone (SMS)</button>
                     <button type="button" class="tab-btn" id="tab-email" onclick="switchContactMode('email')">Gmail / Email</button> 
-                        
-                    </button>    
-                </div> 
-                
+                </div>
                 <div class="form-input-container">
                     <input type="tel" id="contact-input" placeholder="Enter mobile phone (+1...)" required>
                     <button type="submit" class="submit-btn">Subscribe</button>
@@ -196,4 +192,4 @@
 
     <script src="script.js"></script>
 </body>
-</html>   
+</html>
