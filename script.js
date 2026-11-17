@@ -36,64 +36,75 @@ function calculateRecommendedSize(height, weight, chest, waist) {
 }
 
 // Visual Avatar Dynamic Renderer
-function updateAvatar() {
-    if (!isCustomDataAllowed) return;
+document.addEventListener('DOMContentLoaded', () => {
+    initMeasurementListeners();
+});
 
-    // Read Slider Inputs
-    const height = parseInt(document.getElementById('height-input').value);
-    const weight = parseInt(document.getElementById('weight-input').value);
-    const chest = parseInt(document.getElementById('chest-input').value);
-    const waist = parseInt(document.getElementById('waist-input').value);
+function initMeasurementListeners() {
+    const heightInput = document.getElementById('height-input');
+    const weightInput = document.getElementById('weight-input');
+    const chestInput = document.getElementById('chest-input');
+    const waistInput = document.getElementById('waist-input');
 
-    // Update Value UI Labels
-    document.getElementById('height-val').textContent = height;
-    document.getElementById('weight-val').textContent = weight;
-    document.getElementById('chest-val').textContent = chest;
-    document.getElementById('waist-val').textContent = waist;
-
-    // Compute Mannequin Visual Scale
-    const scaleY = (height / 175).toFixed(2);
-    const chestWidth = Math.round((chest / 96) * 70);
-    const waistWidth = Math.round((waist / 80) * 60);
-
-    // Apply Real-time CSS Transformations
-    const mannequin = document.getElementById('ai-mannequin');
-    const torso = document.getElementById('avatar-torso');
-    const waistEl = document.getElementById('avatar-waist');
-
-    if (mannequin && torso && waistEl) {
-        mannequin.style.transform = `scaleY(${scaleY})`;
-        torso.style.width = `${chestWidth}px`;
-        waistEl.style.width = `${waistWidth}px`;
-    }
-
-    // Benchmark Latency for HCD Transparency
-    const t0 = performance.now();
-    const recommendedSize = calculateRecommendedSize(height, weight, chest, waist);
-    const t1 = performance.now();
-
-    // Update Size Recommendation Badge
-    document.getElementById('recommended-size').textContent = recommendedSize;
-    document.getElementById('fit-latency-note').textContent = `⚡ Size computed in ${(t1 - t0).toFixed(2)}ms (Local Zero-Latency Engine)`;
+    // Attach real-time event listeners to all sliders
+    if (heightInput) heightInput.addEventListener('input', updateAvatar);
+    if (weightInput) weightInput.addEventListener('input', updateAvatar);
+    if (chestInput) chestInput.addEventListener('input', updateAvatar);
+    if (waistInput) waistInput.addEventListener('input', updateAvatar);
 }
 
-// Toggle Custom Data Privacy vs Standard Size Mode
-function toggleCustomDataMode() {
-    const toggle = document.getElementById('privacy-toggle');
-    isCustomDataAllowed = toggle.checked;
+function updateAvatar() {
+    // 1. Get current values from all inputs
+    const height = parseFloat(document.getElementById('height-input')?.value || 175);
+    const weight = parseFloat(document.getElementById('weight-input')?.value || 70);
+    const chest = parseFloat(document.getElementById('chest-input')?.value || 96);
+    const waist = parseFloat(document.getElementById('waist-input')?.value || 80);
 
-    const customForm = document.getElementById('custom-measurement-form');
-    const standardPanel = document.getElementById('standard-sizing-panel');
+    // 2. Update numerical text labels on the UI
+    const heightValEl = document.getElementById('height-val');
+    const weightValEl = document.getElementById('weight-val');
+    const chestValEl = document.getElementById('chest-val');
+    const waistValEl = document.getElementById('waist-val');
 
-    if (isCustomDataAllowed) {
-        customForm.classList.remove('hidden');
-        standardPanel.classList.add('hidden');
-        updateAvatar();
-    } else {
-        customForm.classList.add('hidden');
-        standardPanel.classList.remove('hidden');
-        document.getElementById('recommended-size').textContent = "Standard Select";
-        document.getElementById('fit-latency-note').textContent = "🔒 Anonymous Mode Active (No Body Data Stored)";
+    if (heightValEl) heightValEl.textContent = height;
+    if (weightValEl) weightValEl.textContent = weight;
+    if (chestValEl) chestValEl.textContent = chest;
+    if (waistValEl) waistValEl.textContent = waist;
+
+    // 3. Dynamically scale the AI Mannequin parts in real-time
+    const torso = document.getElementById('avatar-torso');
+    const waistPart = document.getElementById('avatar-waist');
+
+    if (torso && waistPart) {
+        // Calculate scaling factors based on baseline standards (175cm / 70kg / 96cm chest / 80cm waist)
+        const heightScale = height / 175;
+        const chestScale = chest / 96;
+        const waistScale = waist / 80;
+
+        // Apply smooth CSS transforms instantly
+        torso.style.transform = `scaleY(${heightScale}) scaleX(${chestScale})`;
+        waistPart.style.transform = `scaleX(${waistScale})`;
+    }
+
+    // 4. Update recommended clothing size dynamically
+    updateRecommendedSize(height, weight, chest);
+}
+
+function updateRecommendedSize(height, weight, chest) {
+    let size = 'M';
+    
+    if (chest < 90 && weight < 60) {
+        size = 'S';
+    } else if (chest > 105 || weight > 90) {
+        size = 'L';
+    }
+    if (height > 185) {
+        size += ' (Tall)';
+    }
+
+    const recSizeEl = document.getElementById('recommended-size');
+    if (recSizeEl) {
+        recSizeEl.textContent = size;
     }
 }
 
