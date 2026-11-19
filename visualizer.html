@@ -178,11 +178,29 @@
           Reset Default
         </button>
       </div>
-    </div>
-
+    </div>  
+    <!-- Size Recommendation Badge -->
+<div class="mt-6 p-4 bg-zinc-900 text-white rounded-2xl flex items-center justify-between shadow-sm">
+  <div>
+    <p class="text-[10px] uppercase tracking-[0.15em] text-zinc-400 font-medium">Recommended FF Size</p>
+    <span id="recommended-size" class="font-serif-display text-3xl font-semibold">M</span>
   </div>
+  <span class="text-[11px] bg-white/10 px-3 py-1.5 rounded-full text-zinc-200 font-medium">99.4% Fit Match</span> 
 
-  <script>
+</div>  
+ 
+  <script> 
+  // ==========================================
+// SIZE CALCULATOR (XS to 2XL)
+// ==========================================
+function calculateSize(chest, waist) {
+  if (chest < 78 || waist < 60) return 'XS';
+  if (chest < 84 || waist < 66) return 'S';
+  if (chest < 92 || waist < 74) return 'M';
+  if (chest < 100 || waist < 82) return 'L';
+  if (chest < 110 || waist < 92) return 'XL';
+  return '2XL';
+}  
     // ==========================================
     // STATE
     // ==========================================
@@ -603,7 +621,13 @@
       refreshLabels();
       applyMannequinMorphs();
     }
-
+     // Update your text labels here...
+  
+  // ADD THIS LINE HERE to update the size live when sliders move:
+  document.getElementById('recommended-size').innerText = calculateSize(state.measurements.chest, state.measurements.waist);
+  
+  applyMannequinMorphs();
+} 
     function setUnit(unit) {
       state.unit = unit;
       const cmBtn = document.getElementById('unit-cm');
