@@ -609,11 +609,6 @@ function calculateSize(chest, waist) {
       document.getElementById('val-hips').innerText   = formatMeasure(m.hips);
       document.getElementById('val-inseam').innerText = formatMeasure(m.inseam);
 
-      document.getElementById('slider-height').value = m.height;
-      document.getElementById('slider-chest').value  = m.chest;
-      document.getElementById('slider-waist').value  = m.waist;
-      document.getElementById('slider-hips').value   = m.hips;
-      document.getElementById('slider-inseam').value = m.inseam;
     }
 
     function updateMeasurement(key, val) {
@@ -624,9 +619,8 @@ function calculateSize(chest, waist) {
      // Update your text labels here...
   
   // ADD THIS LINE HERE to update the size live when sliders move:
-  document.getElementById('recommended-size').innerText = calculateSize(state.measurements.chest, state.measurements.waist);
-  
-  applyMannequinMorphs();
+  document.getElementById('recommended-size').innerText = calculateSize(state.measurements.chest, state.measurements.waist); 
+    
 } 
     function setUnit(unit) {
       state.unit = unit;
