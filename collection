@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FF | Curated Collection Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #faf9f6;
+            --bg-card: #ffffff;
+            --text-main: #141414;
+            --text-muted: #666666;
+            --accent: #141414;
+            --border-light: #e5e4e0;
+            --danger: #b91c1c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        /* Navigation */
+        header {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border-light);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 18px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 28px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-main);
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn-primary {
+            background: var(--text-main);
+            color: #fff;
+            border: 1px solid var(--text-main);
+            padding: 9px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.85;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--text-main);
+            padding: 9px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-main);
+            text-decoration: none;
+        }
+
+        .btn-outline:hover {
+            background: var(--text-main);
+            color: #fff;
+        }
+
+        /* Hero Banner */
+        .collection-hero {
+            text-align: center;
+            padding: 56px 24px 32px;
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        .collection-hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .collection-hero p {
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        /* Category / City Filter Bar */
+        .filter-bar {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 0 24px 36px;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .filter-btn {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-light);
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--text-main);
+            color: var(--text-main);
+        }
+
+        .filter-btn.active {
+            background-color: var(--text-main);
+            color: #ffffff;
+            border-color: var(--text-main);
+        }
+
+        /* Product Grid */
+        .collection-grid {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px 80px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 28px;
+        }
+
+        .product-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+        }
+
+        .card-visual {
+            height: 290px;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            padding: 16px;
+            background-size: cover;
+            background-position: center;
+            background-color: #eae8e3;
+        }
+
+        .city-badge {
+            background-color: rgba(255, 255, 255, 0.92);
+            color: var(--text-main);
+            padding: 5px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 3px;
+        }
+
+        .delete-item-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            font-size: 16px;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .delete-item-btn:hover {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        .card-body {
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .fit-tag {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .pieces-list {
+            list-style: none;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .pieces-list li {
+            margin-bottom: 4px;
+            padding-left: 12px;
+            position: relative;
+        }
+
+        .pieces-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--text-main);
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .price {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .fit-btn {
+            background-color: var(--text-main);
+            color: #ffffff;
+            border: none;
+            padding: 9px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* Modals */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: var(--bg-card);
+            max-width: 480px;
+            width: 100%;
+            padding: 32px;
+            border-radius: 8px;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            font-size: 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .modal-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+
+        /* Add Item Form Styles */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            color: var(--text-main);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-light);
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 14px;
+            background: var(--bg-primary);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--text-main);
+            background: #fff;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .size-options {
+            display: flex;
+            gap: 10px;
+            margin: 14px 0 22px;
+        }
+
+        .size-choice {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border-light);
+            background: var(--bg-primary);
+            cursor: pointer;
+            font-weight: 600;
+            border-radius: 4px;
+        }
+
+        .size-choice.selected {
+            border-color: var(--text-main);
+            background: var(--text-main);
+            color: #fff;
+        }
+
+        .full-btn {
+            width: 100%;
+            padding: 13px;
+            background: var(--text-main);
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <a href="#" class="brand-logo">FF</a>
+            <nav class="nav-links">
+                <a href="#collection-section">Collection</a>
+            </nav>
+            <div class="nav-actions">
+                <button class="btn-primary" onclick="openAddModal()">+ Add Clothing Item</button>
+                <button class="btn-outline" id="cartBtn">Bag (<span id="cartCount">0</span>)</button>
+            </div>
+        </div>
+    </header>
+
+    <section class="collection-hero" id="collection-section">
+        <h1>FF Collection</h1>
+        <p>Browse the curated catalog or add your own custom pieces, photos, and pricing directly to your storefront.</p>
+    </section>
+
+    <div class="filter-bar" id="filterBar"></div>
+
+    <main class="collection-grid" id="collectionGrid"></main>
+
+    <!-- Add New Clothing Item Modal -->
+    <div class="modal-backdrop" id="addModal">
+        <div class="modal-card">
+            <button class="close-modal" onclick="closeAddModal()">&times;</button>
+            <h3>Add New Clothing Item</h3>
+            <form id="addItemForm" onsubmit="handleAddItem(event)">
+                <div class="form-group">
+                    <label for="itemName">Item / Look Name *</label>
+                    <input type="text" id="itemName" placeholder="e.g., Oversized Heavyweight Hoodie" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="itemCategory">Collection / City Tag *</label>
+                        <input type="text" id="itemCategory" placeholder="e.g., Essentials, NYC, Drop 01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="itemPrice">Price ($) *</label>
+                        <input type="number" id="itemPrice" min="1" step="0.01" placeholder="120" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="itemFit">Fit / Silhouette Profile</label>
+                    <input type="text" id="itemFit" placeholder="e.g., Relaxed / Boxy, Tailored">
+                </div>
+
+                <div class="form-group">
+                    <label for="itemDetails">Details / Included Pieces (comma separated)</label>
+                    <textarea id="itemDetails" rows="2" placeholder="e.g., 480gsm French terry cotton, Drop shoulder, Pre-shrunk"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="itemImageFile">Upload Clothing Photo (Optional)</label>
+                    <input type="file" id="itemImageFile" accept="image/*">
+                </div>
+
+                <div class="form-group">
+                    <label for="itemImageUrl">Or Paste Image URL (Optional)</label>
+                    <input type="url" id="itemImageUrl" placeholder="https://example.com/shirt.jpg">
+                </div>
+
+                <button type="submit" class="full-btn">Publish to FF Collection</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Quick Fit & Add to Bag Modal -->
+    <div class="modal-backdrop" id="fitModal">
+        <div class="modal-card">
+            <button class="close-modal" onclick="closeFitModal()">&times;</button>
+            <div class="fit-tag" id="modalCity">CATEGORY</div>
+            <h3 id="modalTitle">Item Name</h3>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;" id="modalSpecs">Fit Profile</p>
+            
+            <label style="font-size: 12px; font-weight: 600; text-transform: uppercase;">Select Size</label>
+            <div class="size-options">
+                <button type="button" class="size-choice" onclick="selectSize(this, 'XS')">XS</button>
+                <button type="button" class="size-choice" onclick="selectSize(this, 'S')">S</button>
+                <button type="button" class="size-choice selected" onclick="selectSize(this, 'M')">M</button>
+                <button type="button" class="size-choice" onclick="selectSize(this, 'L')">L</button>
+                <button type="button" class="size-choice" onclick="selectSize(this, 'XL')">XL</button>
+            </div>
+
+            <button class="full-btn" onclick="confirmAddToBag()">Add to Bag — <span id="modalPrice">$0</span></button>
+        </div>
+    </div>
+
+    <script>
+        const defaultItems = [
+            {
+                id: "NYC-01",
+                city: "New York City",
+                name: "The SoHo Layered Trench",
+                pieces: ["Floor-length black wool overcoat", "Asymmetric tuxedo shirt", "Pleated wide-leg charcoal trousers"],
+                fitProfile: "Tailored / Elongated",
+                price: 420,
+                imageUrl: "",
+                gradient: "linear-gradient(135deg, #2c2c2c 0%, #4a4a4a 100%)"
+            },
+            {
+                id: "ATL-01",
+                city: "Atlanta",
+                name: "The Buckhead Monochrome Velvet",
+                pieces: ["Bottle-green velvet blazer", "High-waisted flared velvet trousers", "Mock-neck satin shell"],
+                fitProfile: "Hourglass / Sculpted",
+                price: 360,
+                imageUrl: "",
+                gradient: "linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%)"
+            },
+            {
+                id: "LA-01",
+                city: "Los Angeles",
+                name: "The Silver Lake Effortless Knit",
+                pieces: ["Open-weave oatmeal linen-cotton cardigan", "Ribbed racerback tank", "Barrel-leg raw denim jeans"],
+                fitProfile: "Slouchy / Architectural",
+                price: 275,
+                imageUrl: "",
+                gradient: "linear-gradient(135deg, #cbb9a8 0%, #e3d5ca 100%)"
+            }
+        ];
+
+        let ffCollection = JSON.parse(localStorage.getItem('ff_collection_items')) || defaultItems;
+        let currentFilter = 'All';
+        let cartCount = 0;
+        let selectedItem = null;
+
+        function saveCollection() {
+            localStorage.setItem('ff_collection_items', JSON.stringify(ffCollection));
+        }
+
+        function renderFilters() {
+            const filterBar = document.getElementById('filterBar');
+            const categories = ['All', ...new Set(ffCollection.map(item => item.city))];
+
+            filterBar.innerHTML = categories.map(cat => `
+                <button class="filter-btn ${currentFilter === cat ? 'active' : ''}" onclick="setFilter('${cat.replace(/'/g, "\\'")}')">
+                    ${cat === 'All' ? 'All Items' : cat}
+                </button>
+            `).join('');
+        }
+
+        function setFilter(category) {
+            currentFilter = category;
+            renderFilters();
+            renderCollection();
+        }
+
+        function renderCollection() {
+            const grid = document.getElementById('collectionGrid');
+            const filteredItems = currentFilter === 'All'
+                ? ffCollection
+                : ffCollection.filter(item => item.city === currentFilter);
+
+            if (filteredItems.length === 0) {
+                grid.innerHTML = `<p style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 40px;">No clothing items in this category yet. Click "+ Add Clothing Item" to add one.</p>`;
+                return;
+            }
+
+            grid.innerHTML = filteredItems.map(item => {
+                const backgroundStyle = item.imageUrl
+                    ? `background-image: url('${item.imageUrl}');`
+                    : `background: ${item.gradient || 'linear-gradient(135deg, #333 0%, #666 100%)'};`;
+
+                return `
+                    <article class="product-card">
+                        <div class="card-visual" style="${backgroundStyle}">
+                            <button class="delete-item-btn" title="Remove item" onclick="deleteItem('${item.id}')">&times;</button>
+                            <span class="city-badge">${item.city}</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="fit-tag">${item.fitProfile || 'Standard Fit'}</div>
+                            <h2 class="card-title">${item.name}</h2>
+                            <ul class="pieces-list">
+                                ${(item.pieces || []).map(piece => `<li>${piece}</li>`).join('')}
+                            </ul>
+                            <div class="card-footer">
+                                <span class="price">$${Number(item.price).toFixed(2)}</span>
+                                <button class="fit-btn" onclick="openFitModal('${item.id}')">Select Size</button>
+                            </div>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+        }
+
+        function openAddModal() {
+            document.getElementById('addModal').style.display = 'flex';
+        }
+
+        function closeAddModal() {
+            document.getElementById('addModal').style.display = 'none';
+            document.getElementById('addItemForm').reset();
+        }
+
+        function handleAddItem(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('itemName').value.trim();
+            const city = document.getElementById('itemCategory').value.trim();
+            const price = parseFloat(document.getElementById('itemPrice').value);
+            const fitProfile = document.getElementById('itemFit').value.trim() || 'Signature Fit';
+            const rawDetails = document.getElementById('itemDetails').value.trim();
+            const pieces = rawDetails ? rawDetails.split(',').map(s => s.trim()).filter(Boolean) : ['FF Exclusive Piece'];
+            const urlInput = document.getElementById('itemImageUrl').value.trim();
+            const fileInput = document.getElementById('itemImageFile').files[0];
+
+            const finalizeNewItem = (imageSrc) => {
+                const newItem = {
+                    id: 'FF-' + Date.now(),
+                    city,
+                    name,
+                    pieces,
+                    fitProfile,
+                    price,
+                    imageUrl: imageSrc,
+                    gradient: 'linear-gradient(135deg, #1f1f1f 0%, #4d4d4d 100%)'
+                };
+
+                ffCollection.unshift(newItem);
+                saveCollection();
+                currentFilter = 'All';
+                renderFilters();
+                renderCollection();
+                closeAddModal();
+            };
+
+            if (fileInput) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    finalizeNewItem(e.target.result);
+                };
+                reader.readAsDataURL(fileInput);
+            } else {
+                finalizeNewItem(urlInput);
+            }
+        }
+
+        function deleteItem(id) {
+            ffCollection = ffCollection.filter(item => item.id !== id);
+            saveCollection();
+            if (!ffCollection.some(item => item.city === currentFilter)) {
+                currentFilter = 'All';
+            }
+            renderFilters();
+            renderCollection();
+        }
+
+        function openFitModal(itemId) {
+            selectedItem = ffCollection.find(i => i.id === itemId);
+            if (!selectedItem) return;
+
+            document.getElementById('modalCity').textContent = selectedItem.city;
+            document.getElementById('modalTitle').textContent = selectedItem.name;
+            document.getElementById('modalSpecs').textContent = selectedItem.fitProfile;
+            document.getElementById('modalPrice').textContent = `$${Number(selectedItem.price).toFixed(2)}`;
+            document.getElementById('fitModal').style.display = 'flex';
+        }
+
+        function closeFitModal() {
+            document.getElementById('fitModal').style.display = 'none';
+        }
+
+        function selectSize(btn) {
+            document.querySelectorAll('.size-choice').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+        }
+
+        function confirmAddToBag() {
+            cartCount++;
+            document.getElementById('cartCount').textContent = cartCount;
+            closeFitModal();
+        }
+
+        renderFilters();
+        renderCollection();
+    </script>
+</body>
+</html>
