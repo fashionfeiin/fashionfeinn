@@ -54,8 +54,21 @@
     }
   </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 sm:p-8">
-
+<body class="min-h-screen flex flex-col items-center justify-center p-4 sm:p-8">
+      <!-- Top Navigation Bar -->
+  <nav class="w-full max-w-6xl mb-6 flex items-center justify-between bg-white/90 backdrop-blur-md px-6 py-3.5 rounded-full border border-zinc-200/80 shadow-sm">
+    <a href="./index.html" class="font-serif-display text-xl tracking-[0.2em] font-semibold text-zinc-900">
+      FF
+    </a>
+    <div class="flex items-center gap-2 sm:gap-3">
+      <a href="./index.html" class="px-4 py-1.5 rounded-full text-xs font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 transition">
+        Home
+      </a>
+      <a href="./collection.html" class="px-4 py-1.5 rounded-full text-xs font-medium bg-zinc-900 text-white hover:bg-zinc-800 transition">
+        Collection
+      </a>
+    </div>
+  </nav> 
   <div class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
 
     <!-- Left: Interactive 3D Mannequin Viewport -->
