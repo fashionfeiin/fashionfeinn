@@ -134,7 +134,7 @@
             font-size: 15px;
         }
 
-        /* Category / City Filter Bar */
+        /* Filter Bar */
         .filter-bar {
             display: flex;
             justify-content: center;
@@ -206,7 +206,7 @@
             background-color: #eae8e3;
         }
 
-        .city-badge {
+        .category-badge {
             background-color: rgba(255, 255, 255, 0.92);
             color: var(--text-main);
             padding: 5px 12px;
@@ -347,7 +347,7 @@
             margin-bottom: 16px;
         }
 
-        /* Add Item Form Styles */
+        /* Form Styles */
         .form-group {
             margin-bottom: 16px;
         }
@@ -458,8 +458,8 @@
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="itemCategory">Collection / City Tag *</label>
-                        <input type="text" id="itemCategory" placeholder="e.g., Essentials, NYC, Drop 01" required>
+                        <label for="itemCategory">Collection Tag *</label>
+                        <input type="text" id="itemCategory" placeholder="e.g., Essentials, Drop 01" required>
                     </div>
                     <div class="form-group">
                         <label for="itemPrice">Price ($) *</label>
@@ -496,7 +496,7 @@
     <div class="modal-backdrop" id="fitModal">
         <div class="modal-card">
             <button class="close-modal" onclick="closeFitModal()">&times;</button>
-            <div class="fit-tag" id="modalCity">CATEGORY</div>
+            <div class="fit-tag" id="modalCategory">CATEGORY</div>
             <h3 id="modalTitle">Item Name</h3>
             <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;" id="modalSpecs">Fit Profile</p>
             
@@ -516,25 +516,28 @@
     <script>
         const defaultItems = [
             {
-                name: "The SoHo Layered Trench",
+                name: "The Layered Trench",
                 pieces: ["Floor-length black wool overcoat", "Asymmetric tuxedo shirt", "Pleated wide-leg charcoal trousers"],
                 fitProfile: "Tailored / Elongated",
+                category: "Outerwear",
                 price: 420,
                 imageUrl: "",
                 gradient: "linear-gradient(135deg, #2c2c2c 0%, #4a4a4a 100%)"
             },
             { 
-                name: "The Buckhead Monochrome Velvet",
+                name: "The Monochrome Velvet Set",
                 pieces: ["Bottle-green velvet blazer", "High-waisted flared velvet trousers", "Mock-neck satin shell"],
                 fitProfile: "Hourglass / Sculpted",
+                category: "Evening",
                 price: 360,
                 imageUrl: "",
                 gradient: "linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%)"
             },
             {
-                name: "The Silver Lake Effortless Knit",
+                name: "The Effortless Knit",
                 pieces: ["Open-weave oatmeal linen-cotton cardigan", "Ribbed racerback tank", "Barrel-leg raw denim jeans"],
                 fitProfile: "Slouchy / Architectural",
+                category: "Essentials",
                 price: 275,
                 imageUrl: "",
                 gradient: "linear-gradient(135deg, #cbb9a8 0%, #e3d5ca 100%)"
@@ -552,7 +555,7 @@
 
         function renderFilters() {
             const filterBar = document.getElementById('filterBar');
-            const categories = ['All', ...new Set(ffCollection.map(item => item.city))];
+            const categories = ['All', ...new Set(ffCollection.map(item => item.category))];
 
             filterBar.innerHTML = categories.map(cat => `
                 <button class="filter-btn ${currentFilter === cat ? 'active' : ''}" onclick="setFilter('${cat.replace(/'/g, "\\'")}')">
@@ -571,7 +574,7 @@
             const grid = document.getElementById('collectionGrid');
             const filteredItems = currentFilter === 'All'
                 ? ffCollection
-                : ffCollection.filter(item => item.city === currentFilter);
+                : ffCollection.filter(item => item.category === currentFilter);
 
             if (filteredItems.length === 0) {
                 grid.innerHTML = `<p style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 40px;">No clothing items in this category yet. Click "+ Add Clothing Item" to add one.</p>`;
@@ -586,8 +589,8 @@
                 return `
                     <article class="product-card">
                         <div class="card-visual" style="${backgroundStyle}">
-                            <button class="delete-item-btn" title="Remove item" onclick="deleteItem('${item.id}')">&times;</button>
-                            <span class="city-badge">${item.city}</span>
+                            <button class="delete-item-btn" title="Remove item" onclick="deleteItem('${item.id || item.name}')">&times;</button>
+                            <span class="category-badge">${item.category}</span>
                         </div>
                         <div class="card-body">
                             <div class="fit-tag">${item.fitProfile || 'Standard Fit'}</div>
@@ -597,7 +600,7 @@
                             </ul>
                             <div class="card-footer">
                                 <span class="price">$${Number(item.price).toFixed(2)}</span>
-                                <button class="fit-btn" onclick="openFitModal('${item.id}')">Select Size</button>
+                                <button class="fit-btn" onclick="openFitModal('${item.id || item.name}')">Select Size</button>
                             </div>
                         </div>
                     </article>
@@ -618,7 +621,7 @@
             event.preventDefault();
 
             const name = document.getElementById('itemName').value.trim();
-            const city = document.getElementById('itemCategory').value.trim();
+            const category = document.getElementById('itemCategory').value.trim();
             const price = parseFloat(document.getElementById('itemPrice').value);
             const fitProfile = document.getElementById('itemFit').value.trim() || 'Signature Fit';
             const rawDetails = document.getElementById('itemDetails').value.trim();
@@ -632,6 +635,7 @@
                     name,
                     pieces,
                     fitProfile,
+                    category,
                     price,
                     imageUrl: imageSrc,
                     gradient: 'linear-gradient(135deg, #1f1f1f 0%, #4d4d4d 100%)'
@@ -656,21 +660,21 @@
             }
         }
 
-        function deleteItem(id) {
-            ffCollection = ffCollection.filter(item => item.id !== id);
+        function deleteItem(identifier) {
+            ffCollection = ffCollection.filter(item => (item.id || item.name) !== identifier);
             saveCollection();
-            if (!ffCollection.some(item => item.city === currentFilter)) {
+            if (!ffCollection.some(item => item.category === currentFilter)) {
                 currentFilter = 'All';
             }
             renderFilters();
             renderCollection();
         }
 
-        function openFitModal(itemId) {
-            selectedItem = ffCollection.find(i => i.id === itemId);
+        function openFitModal(identifier) {
+            selectedItem = ffCollection.find(i => (i.id || i.name) === identifier);
             if (!selectedItem) return;
 
-            document.getElementById('modalCity').textContent = selectedItem.city;
+            document.getElementById('modalCategory').textContent = selectedItem.category;
             document.getElementById('modalTitle').textContent = selectedItem.name;
             document.getElementById('modalSpecs').textContent = selectedItem.fitProfile;
             document.getElementById('modalPrice').textContent = `$${Number(selectedItem.price).toFixed(2)}`;
@@ -697,3 +701,34 @@
     </script>
 </body>
 </html>
+
+      
+
+       
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
