@@ -516,8 +516,6 @@
     <script>
         const defaultItems = [
             {
-                id: "NYC-01",
-                city: "New York City",
                 name: "The SoHo Layered Trench",
                 pieces: ["Floor-length black wool overcoat", "Asymmetric tuxedo shirt", "Pleated wide-leg charcoal trousers"],
                 fitProfile: "Tailored / Elongated",
@@ -525,9 +523,7 @@
                 imageUrl: "",
                 gradient: "linear-gradient(135deg, #2c2c2c 0%, #4a4a4a 100%)"
             },
-            {
-                id: "ATL-01",
-                city: "Atlanta",
+            { 
                 name: "The Buckhead Monochrome Velvet",
                 pieces: ["Bottle-green velvet blazer", "High-waisted flared velvet trousers", "Mock-neck satin shell"],
                 fitProfile: "Hourglass / Sculpted",
@@ -536,8 +532,6 @@
                 gradient: "linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%)"
             },
             {
-                id: "LA-01",
-                city: "Los Angeles",
                 name: "The Silver Lake Effortless Knit",
                 pieces: ["Open-weave oatmeal linen-cotton cardigan", "Ribbed racerback tank", "Barrel-leg raw denim jeans"],
                 fitProfile: "Slouchy / Architectural",
@@ -634,8 +628,7 @@
 
             const finalizeNewItem = (imageSrc) => {
                 const newItem = {
-                    id: 'FF-' + Date.now(),
-                    city,
+                    id: 'FF-' + Date.now(), 
                     name,
                     pieces,
                     fitProfile,
