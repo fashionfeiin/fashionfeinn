@@ -371,4 +371,328 @@
 
     const jaw = new THREE.Mesh(new THREE.SphereGeometry(0.068, 24, 20), skinMat);
     jaw.position.set(0, -0.042, 0.022);
-    jaw.scale.set(0.8 
+    jaw.scale.set(0.84, 0.92, 0.90);
+    headGroup.add(jaw);
+
+    const nose = new THREE.Mesh(new THREE.ConeGeometry(0.012, 0.032, 16), skinMat);
+    nose.position.set(0, -0.008, 0.092);
+    nose.rotation.x = 0.25;
+    headGroup.add(nose);
+
+    const earGeo = new THREE.SphereGeometry(0.018, 16, 16);
+    earGeo.scale(0.45, 1.0, 0.7);
+    const earL = new THREE.Mesh(earGeo, skinMat);
+    earL.position.set(-0.084, -0.005, -0.005);
+    const earR = earL.clone();
+    earR.position.x = 0.084;
+    headGroup.add(earL, earR);
+
+    // Arms & Hands
+    function buildArm(side) {
+      const shoulderPivot = new THREE.Group();
+      shoulderPivot.position.set(side * 0.175, 0.385, 0);
+
+      const shoulderJoint = new THREE.Mesh(new THREE.SphereGeometry(0.046, 20, 20), skinMat);
+      shoulderJoint.castShadow = true;
+      shoulderPivot.add(shoulderJoint);
+
+      const upperArm = createLimb(0.043, 0.035, 0.26, skinMat);
+      upperArm.rotation.z = side * 0.11;
+      shoulderPivot.add(upperArm);
+
+      const elbowPivot = new THREE.Group();
+      elbowPivot.position.set(0, -0.26, 0);
+      upperArm.add(elbowPivot);
+
+      const elbowJoint = new THREE.Mesh(new THREE.SphereGeometry(0.034, 18, 18), skinMat);
+      elbowPivot.add(elbowJoint);
+
+      const forearm = createLimb(0.034, 0.025, 0.24, skinMat);
+      forearm.rotation.x = -0.12;
+      forearm.rotation.z = -side * 0.05;
+      elbowPivot.add(forearm);
+
+      const hand = new THREE.Mesh(new THREE.SphereGeometry(0.027, 16, 16), skinMat);
+      hand.position.set(0, -0.255, 0.006);
+      hand.scale.set(0.65, 1.45, 0.95);
+      forearm.add(hand);
+
+      return shoulderPivot;
+    }
+
+    const leftArm = buildArm(-1);
+    const rightArm = buildArm(1);
+    torsoGroup.add(leftArm, rightArm);
+
+    // Legs, Shorts Hem & Sneakers
+    function buildLeg(side) {
+      const hipPivot = new THREE.Group();
+      hipPivot.position.set(side * 0.088, 0, 0);
+
+      const shortsLeg = createLimb(0.084, 0.072, 0.15, shortsMat);
+      hipPivot.add(shortsLeg);
+
+      const thigh = createLimb(0.076, 0.054, 0.40, skinMat);
+      hipPivot.add(thigh);
+
+      const kneePivot = new THREE.Group();
+      kneePivot.position.set(0, -0.40, 0);
+      thigh.add(kneePivot);
+
+      const kneeJoint = new THREE.Mesh(new THREE.SphereGeometry(0.052, 20, 20), skinMat);
+      kneePivot.add(kneeJoint);
+
+      const calf = createLimb(0.053, 0.036, 0.39, skinMat);
+      kneePivot.add(calf);
+
+      // Sneaker
+      const shoeGroup = new THREE.Group();
+      shoeGroup.position.set(0, -0.415, 0.032);
+
+      const sole = new THREE.Mesh(new THREE.BoxGeometry(0.082, 0.024, 0.205), shoeSoleMat);
+      sole.position.y = -0.012;
+      sole.castShadow = true;
+
+      const upper = new THREE.Mesh(new THREE.BoxGeometry(0.076, 0.044, 0.19), shoeWhiteMat);
+      upper.position.y = 0.018;
+      upper.castShadow = true;
+
+      const toeCap = new THREE.Mesh(new THREE.SphereGeometry(0.038, 16, 16), shoeWhiteMat);
+      toeCap.position.set(0, 0.015, 0.085);
+      toeCap.scale.set(1.0, 0.58, 1.15);
+
+      shoeGroup.add(sole, upper, toeCap);
+      calf.add(shoeGroup);
+
+      return { hipPivot, thigh, calf };
+    }
+
+    const leftLeg = buildLeg(-1);
+    const rightLeg = buildLeg(1);
+    bodyRig.add(leftLeg.hipPivot, rightLeg.hipPivot);
+
+    // ==========================================
+    // MORPHING ENGINE
+    // ==========================================
+    function applyMannequinMorphs() {
+      const { height, chest, waist, hips, inseam } = state.measurements;
+      const isMale = state.gender === 'male';
+
+      const heightRatio = height / 172;
+      const chestRatio  = (chest / (isMale ? 98 : 88)) * (isMale ? 1.07 : 0.98);
+      const waistRatio  = (waist / (isMale ? 80 : 68)) * (isMale ? 1.08 : 0.96);
+      const hipsRatio   = (hips / 96) * (isMale ? 0.93 : 1.03);
+      const inseamRatio = inseam / 78;
+
+      bustGroup.visible = !isMale;
+      if (!isMale) {
+        const bustScale = Math.max(0.75, Math.min(1.45, chest / 88));
+        bustGroup.scale.set(bustScale, bustScale, bustScale);
+      }
+
+      neckMesh.scale.set(isMale ? 1.16 : 0.96, 1.0, isMale ? 1.16 : 0.96);
+
+      const legScaleY = inseamRatio * (heightRatio * 0.35 + 0.65);
+      const hipY = 0.835 * legScaleY;
+
+      leftLeg.hipPivot.position.set(-0.086 * hipsRatio, hipY, 0);
+      rightLeg.hipPivot.position.set(0.086 * hipsRatio, hipY, 0);
+      leftLeg.hipPivot.scale.set(hipsRatio * 0.88 + 0.12, legScaleY, hipsRatio * 0.88 + 0.12);
+      rightLeg.hipPivot.scale.set(hipsRatio * 0.88 + 0.12, legScaleY, hipsRatio * 0.88 + 0.12);
+
+      const torsoScaleY = (heightRatio * 1.15 - legScaleY * 0.15);
+      torsoGroup.position.y = hipY;
+      torsoGroup.scale.set(1, torsoScaleY, 1);
+
+      pelvisMesh.scale.set(1.06 * hipsRatio, 0.78, 0.84 * hipsRatio);
+      shortsBand.scale.set(waistRatio, 1, waistRatio * 0.88);
+      abdomenMesh.scale.set(waistRatio, 1, waistRatio * 0.88);
+      chestMesh.scale.set(1.06 * chestRatio, 1, 0.84 * chestRatio);
+      chestCap.scale.set(1.06 * chestRatio, 0.42, 0.82 * chestRatio);
+
+      const shoulderX = (isMale ? 0.188 : 0.168) * chestRatio;
+      leftArm.position.x = -shoulderX;
+      rightArm.position.x = shoulderX;
+      const armThickness = (chestRatio * 0.55 + 0.45) * (isMale ? 1.08 : 0.94);
+      leftArm.scale.set(armThickness, 1, armThickness);
+      rightArm.scale.set(armThickness, 1, armThickness);
+
+      headGroup.scale.set(1, 1 / torsoScaleY, 1);
+    }
+
+    // ==========================================
+    // INTERACTIVE CAMERA CONTROLS
+    // ==========================================
+    let isDragging = false;
+    let prevMouseX = 0;
+    let targetRotationY = 0.35;
+    let currentRotationY = 0.35;
+    let targetZoom = 4.1;
+    let currentZoom = 4.1;
+
+    container.addEventListener('pointerdown', (e) => {
+      isDragging = true;
+      prevMouseX = e.clientX;
+    });
+
+    window.addEventListener('pointermove', (e) => {
+      if (!isDragging) return;
+      const deltaX = e.clientX - prevMouseX;
+      prevMouseX = e.clientX;
+      targetRotationY += deltaX * 0.012;
+    });
+
+    window.addEventListener('pointerup', () => {
+      isDragging = false;
+    });
+
+    container.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      targetZoom = Math.max(2.5, Math.min(5.2, targetZoom + e.deltaY * 0.002));
+    }, { passive: false });
+
+    function setCameraAngle(rad) {
+      state.autoSpin = false;
+      document.getElementById('toggle-spin').innerText = 'Auto-Rotate: Off';
+      targetRotationY = rad;
+    }
+
+    function toggleAutoSpin() {
+      state.autoSpin = !state.autoSpin;
+      document.getElementById('toggle-spin').innerText = `Auto-Rotate: ${state.autoSpin ? 'On' : 'Off'}`;
+    }
+
+    // ==========================================
+    // UI CONTROLS & SYNC
+    // ==========================================
+    function formatMeasure(cmVal) {
+      if (state.unit === 'cm') return `${Math.round(cmVal)} cm`;
+      return `${(cmVal / 2.54).toFixed(1)} in`;
+    }
+
+    function refreshLabels() {
+      const m = state.measurements;
+      document.getElementById('val-height').innerText = formatMeasure(m.height);
+      document.getElementById('val-chest').innerText  = formatMeasure(m.chest);
+      document.getElementById('val-waist').innerText  = formatMeasure(m.waist);
+      document.getElementById('val-hips').innerText   = formatMeasure(m.hips);
+      document.getElementById('val-inseam').innerText = formatMeasure(m.inseam);
+
+      document.getElementById('slider-height').value = m.height;
+      document.getElementById('slider-chest').value  = m.chest;
+      document.getElementById('slider-waist').value  = m.waist;
+      document.getElementById('slider-hips').value   = m.hips;
+      document.getElementById('slider-inseam').value = m.inseam;
+    }
+
+    function updateMeasurement(key, val) {
+      state.measurements[key] = parseFloat(val);
+      refreshLabels();
+      applyMannequinMorphs();
+    }
+
+    function setUnit(unit) {
+      state.unit = unit;
+      const cmBtn = document.getElementById('unit-cm');
+      const inBtn = document.getElementById('unit-in');
+      if (unit === 'cm') {
+        cmBtn.className = 'px-3 py-1 rounded-full text-xs font-semibold transition bg-white text-zinc-900 shadow-sm';
+        inBtn.className = 'px-3 py-1 rounded-full text-xs font-semibold transition text-zinc-500 hover:text-zinc-900';
+      } else {
+        inBtn.className = 'px-3 py-1 rounded-full text-xs font-semibold transition bg-white text-zinc-900 shadow-sm';
+        cmBtn.className = 'px-3 py-1 rounded-full text-xs font-semibold transition text-zinc-500 hover:text-zinc-900';
+      }
+      refreshLabels();
+    }
+
+    function setGender(gender) {
+      state.gender = gender;
+      const fBtn = document.getElementById('gender-female');
+      const mBtn = document.getElementById('gender-male');
+
+      if (gender === 'female') {
+        fBtn.className = 'px-4 py-1.5 rounded-full text-xs font-medium transition bg-zinc-900 text-white';
+        mBtn.className = 'px-4 py-1.5 rounded-full text-xs font-medium transition text-zinc-600 hover:text-zinc-900';
+        document.getElementById('label-chest').innerText = 'Bust / Chest';
+      } else {
+        mBtn.className = 'px-4 py-1.5 rounded-full text-xs font-medium transition bg-zinc-900 text-white';
+        fBtn.className = 'px-4 py-1.5 rounded-full text-xs font-medium transition text-zinc-600 hover:text-zinc-900';
+        document.getElementById('label-chest').innerText = 'Chest';
+      }
+
+      Object.assign(state.measurements, defaultPresets[gender]);
+      refreshLabels();
+      applyMannequinMorphs();
+    }
+
+    function setSkinTone(hex, btn) {
+      state.skinTone = hex;
+      skinMat.color.set(hex);
+      document.querySelectorAll('.skin-btn').forEach(b => {
+        b.classList.remove('border-2', 'border-zinc-900', 'scale-110');
+        b.classList.add('border', 'border-zinc-300');
+      });
+      if (btn) {
+        btn.classList.remove('border', 'border-zinc-300');
+        btn.classList.add('border-2', 'border-zinc-900', 'scale-110');
+      }
+    }
+
+    function resetMannequin() {
+      Object.assign(state.measurements, defaultPresets[state.gender]);
+      refreshLabels();
+      applyMannequinMorphs();
+      targetRotationY = 0.35;
+      targetZoom = 4.1;
+    }
+
+    // ==========================================
+    // ANIMATION & RESIZE LOOP
+    // ==========================================
+    const clock = new THREE.Clock();
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const elapsed = clock.getElapsedTime();
+
+      if (state.autoSpin && !isDragging) {
+        targetRotationY += 0.008;
+      }
+
+      currentRotationY += (targetRotationY - currentRotationY) * 0.1;
+      currentZoom += (targetZoom - currentZoom) * 0.1;
+
+      avatarRoot.rotation.y = currentRotationY;
+      camera.position.z = currentZoom;
+      bodyRig.position.y = Math.sin(elapsed * 2.0) * 0.003;
+
+      renderer.render(scene, camera);
+    }
+
+    window.addEventListener('resize', () => {
+      if (!container) return;
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
+    });
+
+    // Initialize
+    applyMannequinMorphs();
+    refreshLabels();
+    animate();
+  </script>
+</body>
+</html>
+
+
+
+      
+          
+
+
+
+
+
+
+
+
