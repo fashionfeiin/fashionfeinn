@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3D Mannequin & Measurements</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #FBFBF9;
+      color: #18181B;
+    }
+    .font-serif-display {
+      font-family: 'Playfair Display', Georgia, serif;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 5px;
+      background: #E4E4E7;
+      border-radius: 999px;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #18181B;
+      border: 2px solid #FFFFFF;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
+      cursor: pointer;
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #18181B;
+      border: 2px solid #FFFFFF;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
+      cursor: pointer;
+    }
+
+    .studio-stage {
+      background: radial-gradient(circle at 50% 42%, #FFFFFF 0%, #F3F2EE 72%, #EAE8E1 100%);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 sm:p-8">
+
+  <div class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+
+    <!-- Left: Interactive 3D Mannequin Viewport -->
+    <div class="lg:col-span-7 studio-stage rounded-3xl border border-zinc-200/80 shadow-sm relative overflow-hidden flex flex-col justify-between min-h-[540px] lg:min-h-[680px]">
+      
+      <!-- Top Controls: Male/Female & View Angles -->
+      <div class="relative z-10 p-5 flex flex-wrap items-center justify-between gap-3">
+        <div class="inline-flex bg-white/90 backdrop-blur-md p-1 rounded-full border border-zinc-200 shadow-sm">
+          <button id="gender-female" onclick="setGender('female')" class="px-4 py-1.5 rounded-full text-xs font-medium transition bg-zinc-900 text-white">
+            Female
+          </button>
+          <button id="gender-male" onclick="setGender('male')" class="px-4 py-1.5 rounded-full text-xs font-medium transition text-zinc-600 hover:text-zinc-900">
+            Male
+          </button>
+        </div>
+
+        <div class="inline-flex bg-white/90 backdrop-blur-md p-1 rounded-full border border-zinc-200 shadow-sm">
+          <button onclick="setCameraAngle(0)" class="px-3 py-1 rounded-full text-xs font-medium text-zinc-600 hover:text-zinc-900 transition">Front</button>
+          <button onclick="setCameraAngle(Math.PI / 4)" class="px-3 py-1 rounded-full text-xs font-medium text-zinc-600 hover:text-zinc-900 transition">3/4</button>
+          <button onclick="setCameraAngle(Math.PI / 2)" class="px-3 py-1 rounded-full text-xs font-medium text-zinc-600 hover:text-zinc-900 transition">Side</button>
+          <button onclick="setCameraAngle(Math.PI)" class="px-3 py-1 rounded-full text-xs font-medium text-zinc-600 hover:text-zinc-900 transition">Back</button>
+        </div>
+      </div>
+
+      <!-- 3D Canvas -->
+      <div id="canvas-container" class="absolute inset-0 cursor-grab active:cursor-grabbing"></div>
+
+      <!-- Bottom Controls: Skin Color Swatches & Auto-Rotate -->
+      <div class="relative z-10 p-5 flex flex-wrap items-center justify-between gap-4 pointer-events-none">
+        <div class="pointer-events-auto inline-flex items-center gap-2.5 bg-white/90 backdrop-blur-md px-3.5 py-2 rounded-full border border-zinc-200 shadow-sm">
+          <span class="text-[11px] font-medium text-zinc-500 mr-0.5">Skin Tone</span>
+          <button onclick="setSkinTone('#F3D3BD', this)" title="Porcelain" class="skin-btn w-5 h-5 rounded-full border-2 border-zinc-900 shadow-sm transition transform scale-110" style="background:#F3D3BD;"></button>
+          <button onclick="setSkinTone('#E5B89B', this)" title="Warm Beige" class="skin-btn w-5 h-5 rounded-full border border-zinc-300 shadow-sm transition hover:scale-110" style="background:#E5B89B;"></button>
+          <button onclick="setSkinTone('#C6906B', this)" title="Olive Tan" class="skin-btn w-5 h-5 rounded-full border border-zinc-300 shadow-sm transition hover:scale-110" style="background:#C6906B;"></button>
+          <button onclick="setSkinTone('#9B6443', this)" title="Caramel Bronze" class="skin-btn w-5 h-5 rounded-full border border-zinc-300 shadow-sm transition hover:scale-110" style="background:#9B6443;"></button>
+          <button onclick="setSkinTone('#5D3A27', this)" title="Deep Espresso" class="skin-btn w-5 h-5 rounded-full border border-zinc-300 shadow-sm transition hover:scale-110" style="background:#5D3A27;"></button>
+        </div>
+
+        <button id="toggle-spin" onclick="toggleAutoSpin()" class="pointer-events-auto bg-white/90 backdrop-blur-md hover:bg-white text-zinc-700 px-3.5 py-2 rounded-full border border-zinc-200 shadow-sm text-xs font-medium transition">
+          Auto-Rotate: Off
+        </button>
+      </div>
+    </div>
+
+    <!-- Right: Body Measurements Panel -->
+    <div class="lg:col-span-5 bg-white rounded-3xl border border-zinc-200/80 shadow-sm p-6 sm:p-8 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h2 class="font-serif-display text-2xl font-medium text-zinc-900">Body Measurements</h2>
+            <p class="text-xs text-zinc-500 mt-0.5">Adjust proportions in real time</p>
+          </div>
+          <!-- CM / IN Toggle -->
+          <div class="inline-flex bg-zinc-100 p-1 rounded-full border border-zinc-200/70">
+            <button id="unit-cm" onclick="setUnit('cm')" class="px-3 py-1 rounded-full text-xs font-semibold transition bg-white text-zinc-900 shadow-sm">CM</button>
+            <button id="unit-in" onclick="setUnit('in')" class="px-3 py-1 rounded-full text-xs font-semibold transition text-zinc-500 hover:text-zinc-900">IN</button>
+          </div>
+        </div>
+
+        <!-- Measurement Sliders -->
+        <div class="space-y-5">
+          <div>
+            <div class="flex justify-between text-xs font-medium mb-2">
+              <span class="text-zinc-700">Height</span>
+              <span id="val-height" class="font-semibold text-zinc-900">170 cm</span>
+            </div>
+            <input id="slider-height" type="range" min="150" max="200" value="170" oninput="updateMeasurement('height', this.value)">
+          </div>
+
+          <div>
+            <div class="flex justify-between text-xs font-medium mb-2">
+              <span id="label-chest" class="text-zinc-700">Bust / Chest</span>
+              <span id="val-chest" class="font-semibold text-zinc-900">88 cm</span>
+            </div>
+            <input id="slider-chest" type="range" min="74" max="130" value="88" oninput="updateMeasurement('chest', this.value)">
+          </div>
+
+          <div>
+            <div class="flex justify-between text-xs font-medium mb-2">
+              <span class="text-zinc-700">Waist</span>
+              <span id="val-waist" class="font-semibold text-zinc-900">68 cm</span>
+            </div>
+            <input id="slider-waist" type="range" min="56" max="120" value="68" oninput="updateMeasurement('waist', this.value)">
+          </div>
+
+          <div>
+            <div class="flex justify-between text-xs font-medium mb-2">
+              <span class="text-zinc-700">Hips</span>
+              <span id="val-hips" class="font-semibold text-zinc-900">96 cm</span>
+            </div>
+            <input id="slider-hips" type="range" min="78" max="135" value="96" oninput="updateMeasurement('hips', this.value)">
+          </div>
+
+          <div>
+            <div class="flex justify-between text-xs font-medium mb-2">
+              <span class="text-zinc-700">Inseam</span>
+              <span id="val-inseam" class="font-semibold text-zinc-900">78 cm</span>
+            </div>
+            <input id="slider-inseam" type="range" min="65" max="95" value="78" oninput="updateMeasurement('inseam', this.value)">
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-8 pt-5 border-t border-zinc-100 flex items-center justify-between">
+        <span class="text-xs text-zinc-400">Drag mannequin to rotate • Scroll to zoom</span>
+        <button onclick="resetMannequin()" class="text-xs font-medium text-zinc-600 hover:text-zinc-900 underline underline-offset-4 transition">
+          Reset Default
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // ==========================================
+    // STATE
+    // ==========================================
+    const state = {
+      unit: 'cm',
+      gender: 'female',
+      skinTone: '#F3D3BD',
+      autoSpin: false,
+      measurements: {
+        height: 170,
+        chest: 88,
+        waist: 68,
+        hips: 96,
+        inseam: 78
+      }
+    };
+
+    const defaultPresets = {
+      female: { height: 170, chest: 88, waist: 68, hips: 96, inseam: 78 },
+      male:   { height: 180, chest: 100, waist: 82, hips: 96, inseam: 82 }
+    };
+
+    // ==========================================
+    // THREE.JS SCENE & HUMAN MANNEQUIN BUILDER
+    // ==========================================
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
+
+    const camera = new THREE.PerspectiveCamera(34, container.clientWidth / container.clientHeight, 0.1, 100);
+    camera.position.set(0, 1.05, 4.1);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    container.appendChild(renderer.domElement);
+
+    // Lighting
+    scene.add(new THREE.AmbientLight(0xffffff, 0.72));
+
+    const keyLight = new THREE.DirectionalLight(0xfffcf5, 0.85);
+    keyLight.position.set(2.4, 4.2, 3.2);
+    keyLight.castShadow = true;
+    keyLight.shadow.mapSize.set(1024, 1024);
+    keyLight.shadow.bias = -0.0005;
+    scene.add(keyLight);
+
+    const fillLight = new THREE.DirectionalLight(0xeef4ff, 0.42);
+    fillLight.position.set(-2.8, 2.2, 1.8);
+    scene.add(fillLight);
+
+    const rimLight = new THREE.DirectionalLight(0xffffff, 0.48);
+    rimLight.position.set(0, 3.0, -3.0);
+    scene.add(rimLight);
+
+    // Ground Shadow & Ring
+    const floor = new THREE.Mesh(
+      new THREE.PlaneGeometry(12, 12),
+      new THREE.ShadowMaterial({ opacity: 0.08 })
+    );
+    floor.rotation.x = -Math.PI / 2;
+    floor.receiveShadow = true;
+    scene.add(floor);
+
+    const pedRing = new THREE.Mesh(
+      new THREE.RingGeometry(0.46, 0.475, 64),
+      new THREE.MeshBasicMaterial({ color: 0xD4D4D8, side: THREE.DoubleSide })
+    );
+    pedRing.rotation.x = -Math.PI / 2;
+    pedRing.position.y = 0.002;
+    scene.add(pedRing);
+
+    // Ribbed Tank Top Texture
+    function createRibbedTankTexture() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 256;
+      canvas.height = 256;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#F4F3EF';
+      ctx.fillRect(0, 0, 256, 256);
+
+      ctx.fillStyle = 'rgba(0,0,0,0.035)';
+      for (let x = 0; x < 256; x += 6) {
+        ctx.fillRect(x, 0, 2, 256);
+      }
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.wrapS = THREE.RepeatWrapping;
+      tex.wrapT = THREE.RepeatWrapping;
+      tex.repeat.set(6, 2);
+      return tex;
+    }
+
+    // Materials
+    const skinMat = new THREE.MeshStandardMaterial({
+      color: state.skinTone,
+      roughness: 0.48,
+      metalness: 0.02
+    });
+
+    const tankMat = new THREE.MeshStandardMaterial({
+      map: createRibbedTankTexture(),
+      roughness: 0.85,
+      metalness: 0.0
+    });
+
+    const shortsMat = new THREE.MeshStandardMaterial({
+      color: 0xE7E5DF,
+      roughness: 0.82,
+      metalness: 0.0
+    });
+
+    const shoeWhiteMat = new THREE.MeshStandardMaterial({ color: 0xFAFAFA, roughness: 0.4 });
+    const shoeSoleMat  = new THREE.MeshStandardMaterial({ color: 0xE4E4E7, roughness: 0.65 });
+
+    // Mannequin Assembly
+    const avatarRoot = new THREE.Group();
+    scene.add(avatarRoot);
+    const bodyRig = new THREE.Group();
+    avatarRoot.add(bodyRig);
+
+    function createLimb(rTop, rBot, len, mat) {
+      const geo = new THREE.CylinderGeometry(rTop, rBot, len, 28, 1);
+      geo.translate(0, -len / 2, 0);
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      return mesh;
+    }
+
+    // Torso, Tank Top & Shorts
+    const torsoGroup = new THREE.Group();
+    bodyRig.add(torsoGroup);
+
+    const pelvisMesh = new THREE.Mesh(new THREE.SphereGeometry(0.145, 32, 24), shortsMat);
+    pelvisMesh.scale.set(1.06, 0.78, 0.84);
+    pelvisMesh.castShadow = true;
+    torsoGroup.add(pelvisMesh);
+
+    const shortsBand = new THREE.Mesh(new THREE.CylinderGeometry(0.125, 0.138, 0.075, 32), shortsMat);
+    shortsBand.position.y = 0.065;
+    shortsBand.castShadow = true;
+    torsoGroup.add(shortsBand);
+
+    const abdomenMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.118, 0.126, 0.15, 32), tankMat);
+    abdomenMesh.position.y = 0.14;
+    abdomenMesh.castShadow = true;
+    torsoGroup.add(abdomenMesh);
+
+    const chestMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.152, 0.118, 0.21, 32), tankMat);
+    chestMesh.position.y = 0.30;
+    chestMesh.scale.set(1.06, 1.0, 0.84);
+    chestMesh.castShadow = true;
+    torsoGroup.add(chestMesh);
+
+    const chestCap = new THREE.Mesh(new THREE.SphereGeometry(0.15, 32, 20), tankMat);
+    chestCap.position.y = 0.39;
+    chestCap.scale.set(1.06, 0.42, 0.82);
+    chestCap.castShadow = true;
+    torsoGroup.add(chestCap);
+
+    // Tank Top Straps
+    const leftStrap = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.018, 0.09, 16), tankMat);
+    leftStrap.position.set(-0.078, 0.425, 0.01);
+    leftStrap.rotation.z = -0.12;
+    torsoGroup.add(leftStrap);
+
+    const rightStrap = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.018, 0.09, 16), tankMat);
+    rightStrap.position.set(0.078, 0.425, 0.01);
+    rightStrap.rotation.z = 0.12;
+    torsoGroup.add(rightStrap);
+
+    // Sculpted Bust (Female Mode)
+    const bustGroup = new THREE.Group();
+    bustGroup.position.set(0, 0.31, 0.088);
+    const bustL = new THREE.Mesh(new THREE.SphereGeometry(0.056, 24, 20), tankMat);
+    bustL.position.set(-0.054, 0, 0);
+    bustL.scale.set(0.95, 0.92, 0.82);
+    const bustR = bustL.clone();
+    bustR.position.set(0.054, 0, 0);
+    bustGroup.add(bustL, bustR);
+    torsoGroup.add(bustGroup);
+
+    // Neck & Head
+    const neckMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.044, 0.054, 0.11, 24), skinMat);
+    neckMesh.position.y = 0.47;
+    neckMesh.castShadow = true;
+    torsoGroup.add(neckMesh);
+
+    const headGroup = new THREE.Group();
+    headGroup.position.y = 0.595;
+    torsoGroup.add(headGroup);
+
+    const cranium = new THREE.Mesh(new THREE.SphereGeometry(0.092, 32, 28), skinMat);
+    cranium.scale.set(0.90, 1.12, 0.96);
+    cranium.castShadow = true;
+    headGroup.add(cranium);
+
+    const jaw = new THREE.Mesh(new THREE.SphereGeometry(0.068, 24, 20), skinMat);
+    jaw.position.set(0, -0.042, 0.022);
+    jaw.scale.set(0.8  
+        </script>
+</body>
+</html>  
