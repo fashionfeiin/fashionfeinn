@@ -73,9 +73,59 @@
     </form>
     <p id="message"></p>
   </div>
-<script src="script.js"></script>  
-  
-   
+
+  <script>
+    // 1. Initialize Supabase Client
+    // Replace these placeholder strings with your actual Supabase Project URL and Anon/Public Key from your Supabase dashboard
+    const SUPABASE_URL = 'https://uilzexhyrpzrwhitthow.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_dqsyUaS0Ba58WDCRSNz1dA_MpRUMHT1'; 
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // 2. Handle Form Submit & Authentication
+    const authForm = document.getElementById('auth-form');
+    const messageEl = document.getElementById('message');
+
+    authForm.addEventListener('submit', async function(event) {
+      event.preventDefault();
+
+      const email = document.getElementById('email').value;
+      const phone = document.getElementById('phone').value;
+      const password = document.getElementById('password').value;
+
+      messageEl.textContent = 'Processing...';
+
+      // Try signing in first
+      let { data, error } = await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
+
+      // If user doesn't exist yet, automatically sign them up!
+      if (error) {
+        let signUpResult = await supabaseClient.auth.signUp({
+          email: email,
+          password: password,
+          options: {
+            data: { phone: phone }
+          }
+        });
+
+        if (signUpResult.error) {
+          messageEl.textContent = 'Error: ' + signUpResult.error.message;
+          return;
+        } else {
+          messageEl.textContent = 'Account created successfully! Redirecting...';
+        }
+      } else {
+        messageEl.textContent = 'Signed in successfully! Redirecting...';
+      }
+
+      // 3. Automatically redirect back to your home page after 1 second
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 1000);
+    });
+  </script>
 
 </body>
 </html>
