@@ -1,13 +1,14 @@
-/* Global Design Tokens & HCD Color Palette */
 :root {
     --bg-primary: #FBFBFB;
     --bg-surface: #FFFFFF;
+    --bg-card: #FFFFFF;
     --text-main: #1A1A1A;
     --text-muted: #666666;
     --accent: #2C3E50;
     --accent-hover: #1A252F;
     --highlight: #D4AF37;
     --border-color: #E5E7EB;
+    --border-light: #E5E7EB;
     --radius-sm: 8px;
     --radius-md: 14px;
     --radius-lg: 20px;
@@ -39,29 +40,28 @@ body {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border-color);
-    z-index: 1000;
+    z-index: 900;
 }
 
 .nav-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 1.2rem 2rem;
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
 }
 
 /* Hamburger + FF logo pinned to the far left edge of the header */
-.navbar .nav-left {
+.navbar .brand-group {
     position: absolute;
-    left: 2rem;
+    left: 24px;
     top: 50%;
     transform: translateY(-50%);
-}
-
-.navbar .nav-container {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    z-index: 910;
 }
 
 .navbar .nav-links {
@@ -574,15 +574,6 @@ input:checked + .slider:before { transform: translateX(22px); }
     text-decoration: none;
 }
 
-@media (max-width: 900px) {
-    .main-layout, .studio-workspace {
-        grid-template-columns: 1fr;
-    }
-    .footer-container {
-        flex-direction: column;
-        gap: 1rem;
-    }
-}
 /* ==========================================
    HAMBURGER DRAWER & PROFILE MODAL STYLING
    ========================================== */
@@ -620,7 +611,7 @@ input:checked + .slider:before { transform: translateX(22px); }
 .side-drawer {
     position: fixed;
     top: 0;
-    left: -300px;
+    left: -320px;
     width: 280px;
     height: 100vh;
     background: var(--bg-card);
@@ -738,19 +729,25 @@ input:checked + .slider:before { transform: translateX(22px); }
     font-size: 16px;
     color: var(--text-main);
     font-weight: bold;
-} 
+}
 
-/* Narrow screens: keep the original in-flow header layout */
+/* Narrow screens */
 @media (max-width: 900px) {
+    .main-layout, .studio-workspace {
+        grid-template-columns: 1fr;
+    }
+    .footer-container {
+        flex-direction: column;
+        gap: 1rem;
+    }
     .navbar .nav-container {
         display: flex;
+        justify-content: flex-end;
     }
-    .navbar .nav-left {
-        position: static;
-        transform: none;
+    .navbar .brand-group {
+        left: 16px;
     }
-    .navbar .nav-links,
-    .navbar .nav-actions {
-        grid-column: auto;
+    .navbar .nav-links {
+        display: none !important;
     }
 }
