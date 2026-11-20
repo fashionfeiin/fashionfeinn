@@ -650,17 +650,17 @@
             <form id="addItemForm" onsubmit="handleAddItem(event)">
                 <div class="form-group">
                     <label for="itemName">Item / Look Name *</label>
-                    <input type="text" id="itemName" placeholder="e.g., Oversized Heavyweight Hoodie" required>
+                    <input type="text" id="itemName" placeholder="e.g., "Flared Sweatsuit", required> 
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="itemCategory">Collection Tag *</label>
-                        <input type="text" id="itemCategory" placeholder="e.g., Essentials, New York City" required>
+                        <input type="text" id="itemCategory" placeholder="e.g., Sweatsuits, Sweats, Sweaters" required> 
                     </div>
                     <div class="form-group">
                         <label for="itemPrice">Price ($) *</label>
-                        <input type="number" id="itemPrice" min="1" step="0.01" placeholder="120" required>
+                        <input type="number" id="itemPrice" min="1" step="0.01" placeholder="120" required> 
                     </div>
                 </div>
 
@@ -671,7 +671,7 @@
 
                 <div class="form-group">
                     <label for="itemDetails">Details / Included Pieces (comma separated)</label>
-                    <textarea id="itemDetails" rows="2" placeholder="e.g., 480gsm French terry cotton, Drop shoulder, Pre-shrunk"></textarea>
+                    <textarea id="itemDetails" rows="2" placeholder="e.g., 480gsm French terry cotton, Flared Sweatsuit, Pre-shrunk"></textarea>
                 </div>
 
                 <div class="form-group">
@@ -711,8 +711,8 @@
     </div>
 
     <script>
-        const SUPABASE_URL = 'https://YOUR_SUPABASE_PROJECT_ID.supabase.co';
-        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        const SUPABASE_URL = 'https://uilzexhyrpzrwhitthow.supabase.co';  
+        const SUPABASE_ANON_KEY = 'https://sb_publishable_dqsyUaS0Ba58WDCRSNz1dA_MpRUMHT1';  
         const supabaseClient = (window.supabase && SUPABASE_URL !== 'https://YOUR_SUPABASE_PROJECT_ID.supabase.co')
             ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
             : null;
@@ -722,7 +722,7 @@
         const defaultItems = [
             {
                 name: "Black FF Set",
-                pieces: ["480gsm French terry boxy hoodie", "flared sweatpants", "Embroidered FF chest crest"],
+                pieces: ["480gsm French terry boxy hoodie", "Flared Sweatpants", "Embroidered FF chest crest"],
                 fitProfile: "Relaxed / Boxy",
                 category: "Sweatsuit",
                 price: 240,
@@ -731,7 +731,7 @@
             },
             { 
                 name: "Pink FF Set",
-                pieces: ["480gsm French terry boxy hoodie", "flared sweatpants", "Embroidered FF chest crest"], 
+                pieces: ["480gsm French terry boxy hoodie", "Flared Sweatpants", "Embroidered FF chest crest"], 
                 fitProfile: "Relaxed / Boxy", 
                 category: "Sweatsuit",
                 price: 135,
@@ -740,7 +740,7 @@
             },
             {
                 name: "Green FF Set",
-                pieces: ["480gsm French terry boxy hoodie", "flared sweatpants", "Embroidered FF chest crest"], 
+                pieces: ["480gsm French terry boxy hoodie", "Flared Sweatpants", "Embroidered FF chest crest"], 
                 fitProfile: "Relaxed / Boxy",
                 category: "Sweatsuit",
                 price: 185,
@@ -863,20 +863,25 @@
             document.getElementById('profileModal').style.display = 'none';
             window.location.reload();
         });
-
         function saveCollection() {
-            localStorage.setItem('ff_collection_items', JSON.stringify(ffCollection));
+            localStorage.setItem('ff_collection_v2', JSON.stringify(ffCollection));
         }
 
         function renderFilters() {
             const filterBar = document.getElementById('filterBar');
-            const categories = ['All', ...new Set(ffCollection.map(item => item.category))];
+            const fixedCategories = ['All', 'Sweatsuits', 'Sweats', 'Sweaters'];
+            
+            // Include any new custom tags if you add them later, without duplicates
+            const extraCategories = [...new Set(ffCollection.map(item => item.category))]
+                .filter(cat => !fixedCategories.includes(cat));
+            const categories = [...fixedCategories, ...extraCategories];
 
             filterBar.innerHTML = categories.map(cat => `
                 <button class="filter-btn ${currentFilter === cat ? 'active' : ''}" onclick="setFilter('${cat.replace(/'/g, "\\'")}')">
                     ${cat === 'All' ? 'All Items' : cat}
                 </button>
-            `).join('');
+            `).join(''); 
+        
         }
 
         function setFilter(category) {
