@@ -18,7 +18,7 @@
     --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-*, *::before, *::after {
+* {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -51,10 +51,26 @@ body {
     align-items: center;
 }
 
-.brand-group {
-    display: flex;
-    align-items: center;
-    gap: 20px;
+/* Hamburger + FF logo pinned to the far left edge of the header */
+.navbar .nav-left {
+    position: absolute;
+    left: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.navbar .nav-container {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+}
+
+.navbar .nav-links {
+    grid-column: 2;
+}
+
+.navbar .nav-actions {
+    grid-column: 3;
+    justify-self: end;
 }
 
 .brand-logo {
@@ -150,6 +166,301 @@ body {
 
 .cta-btn:hover {
     transform: translateY(-2px);
+}
+
+/* Main Layout Grid */
+.main-layout {
+    max-width: 1280px;
+    margin: 3rem auto;
+    padding: 0 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 3rem;
+}
+
+/* Product Collection */
+.product-gallery h2, .studio-header h2 {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.5rem;
+}
+
+.product-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card-img-wrap {
+    width: 100%;
+    height: 180px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: #EFEFEF;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.placeholder-img {
+    width: 60%;
+    height: 80%;
+    border-radius: 6px;
+    opacity: 0.75;
+}
+
+.jacket-img { background: #4A5568; }
+.pants-img { background: #718096; }
+.dress-img { background: #A0AEC0; }
+
+.card-details h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.price {
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.select-product-btn {
+    width: 100%;
+    padding: 0.6rem;
+    background: transparent;
+    border: 1px solid var(--text-main);
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.select-product-btn:hover {
+    background: var(--text-main);
+    color: white;
+}
+
+/* Studio & Interactive Avatar */
+.studio-container {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    box-shadow: var(--shadow-soft);
+}
+
+.subtext {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* Privacy Toggle Switch */
+.data-privacy-card {
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+    margin: 1.5rem 0;
+}
+
+.privacy-toggle-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 24px;
+}
+
+.switch input { opacity: 0; width: 0; height: 0; }
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #CBD5E1;
+    transition: .3s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+}
+
+input:checked + .slider { background-color: var(--accent); }
+input:checked + .slider:before { transform: translateX(22px); }
+
+/* Workspace & Visualizer */
+.studio-workspace {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.mannequin-viewport {
+    background: #F1F5F9;
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 380px;
+}
+
+.avatar-frame {
+    height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mannequin-graphic {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.2s ease-out;
+}
+
+.mannequin-head {
+    width: 32px;
+    height: 36px;
+    background: #64748B;
+    border-radius: 50%;
+    margin-bottom: 4px;
+}
+
+.mannequin-torso {
+    width: 70px;
+    height: 80px;
+    background: #475569;
+    border-radius: 8px 8px 4px 4px;
+    transition: all 0.2s ease;
+}
+
+.mannequin-waist {
+    width: 60px;
+    height: 40px;
+    background: #334155;
+    border-radius: 2px;
+    transition: all 0.2s ease;
+}
+
+.mannequin-legs {
+    width: 50px;
+    height: 90px;
+    background: #1E293B;
+    border-radius: 2px 2px 6px 6px;
+    transition: all 0.2s ease;
+}
+
+.fit-verdict-badge {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    text-align: center;
+    width: 100%;
+}
+
+.recommended-size-tag {
+    color: var(--accent);
+    margin: 0.25rem 0;
+}
+
+.latency-indicator {
+    font-size: 0.75rem;
+    color: #10B981;
+    font-weight: 600;
+}
+
+/* Controls Panel */
+.controls-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.control-group {
+    margin-bottom: 1rem;
+}
+
+.control-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.control-group input[type="range"] {
+    width: 100%;
+    accent-color: var(--accent);
+}
+
+.hidden { display: none !important; }
+
+.size-btn-group {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.size-btn {
+    padding: 0.6rem;
+    border: 1px solid var(--border-color);
+    background: white;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.size-btn.active, .size-btn:hover {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+
+.add-cart-action-btn {
+    width: 100%;
+    padding: 0.9rem;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: background var(--transition-fast);
+}
+
+.add-cart-action-btn:hover {
+    background: var(--accent-hover);
 }
 
 /* VIP Form */
@@ -263,6 +574,15 @@ body {
     text-decoration: none;
 }
 
+@media (max-width: 900px) {
+    .main-layout, .studio-workspace {
+        grid-template-columns: 1fr;
+    }
+    .footer-container {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
 /* ==========================================
    HAMBURGER DRAWER & PROFILE MODAL STYLING
    ========================================== */
@@ -355,4 +675,82 @@ body {
     font-weight: 600;
     cursor: pointer;
     color: var(--text-main);
+}
+
+.profile-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    z-index: 1000;
+}
+
+.profile-modal.active {
+    display: flex;
+}
+
+.profile-modal-content {
+    background: var(--bg-card);
+    width: 100%;
+    max-width: 460px;
+    padding: 32px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-soft);
+}
+
+.saved-data-card {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+/* Expanded Measurements Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.stat-box {
+    background: #fff;
+    padding: 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-light);
+    text-align: center;
+}
+
+.stat-label {
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 2px;
+    letter-spacing: 0.5px;
+}
+
+.stat-value {
+    font-size: 16px;
+    color: var(--text-main);
+    font-weight: bold;
+} 
+
+/* Narrow screens: keep the original in-flow header layout */
+@media (max-width: 900px) {
+    .navbar .nav-container {
+        display: flex;
+    }
+    .navbar .nav-left {
+        position: static;
+        transform: none;
+    }
+    .navbar .nav-links,
+    .navbar .nav-actions {
+        grid-column: auto;
+    }
 }
