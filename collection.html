@@ -719,38 +719,42 @@
 
         const defaultItems = [
             {
-                name: "The Layered Trench",
-                pieces: ["Floor-length black wool overcoat", "Asymmetric tuxedo shirt", "Pleated wide-leg charcoal trousers"],
-                fitProfile: "Tailored / Elongated",
-                category: "New York City",
-                price: 420,
+        const defaultItems = [
+            {
+                name: "Black FF Set",
+                pieces: ["480gsm French terry boxy hoodie", "flared sweatpants", "Embroidered FF chest crest"],
+                fitProfile: "Relaxed / Boxy",
+                category: "Sweatsuit",
+                price: 240,
                 imageUrl: "",
                 gradient: "linear-gradient(135deg, #2c2c2c 0%, #4a4a4a 100%)"
             },
             { 
-                name: "The Monochrome Velvet Set",
-                pieces: ["Bottle-green velvet blazer", "High-waisted flared velvet trousers", "Mock-neck satin shell"],
-                fitProfile: "Hourglass / Sculpted",
-                category: "Atlanta",
-                price: 360,
+                name: "Pink FF Set",
+                pieces: ["480gsm French terry boxy hoodie", "flared sweatpants", "Embroidered FF chest crest"], 
+                fitProfile: "Relaxed / Boxy", 
+                category: "Sweatsuit",
+                price: 135,
                 imageUrl: "",
                 gradient: "linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%)"
             },
             {
-                name: "The Effortless Knit",
-                pieces: ["Open-weave oatmeal linen-cotton cardigan", "Ribbed racerback tank", "Barrel-leg raw denim jeans"],
-                fitProfile: "Slouchy / Architectural",
-                category: "Los Angeles",
-                price: 275,
+                name: "Green FF Set",
+                pieces: ["480gsm French terry boxy hoodie", "flared sweatpants", "Embroidered FF chest crest"], 
+                fitProfile: "Relaxed / Boxy",
+                category: "Sweatsuit",
+                price: 185,
                 imageUrl: "",
                 gradient: "linear-gradient(135deg, #cbb9a8 0%, #e3d5ca 100%)"
             }
         ];
 
-        let ffCollection = JSON.parse(localStorage.getItem('ff_collection_items')) || defaultItems;
+        // Using a fresh storage key so the old city items are replaced automatically
+        let ffCollection = JSON.parse(localStorage.getItem('ff_collection_v2')) || defaultItems;
         let currentFilter = 'All';
         let cartCount = 0;
         let selectedItem = null;
+
 
         document.addEventListener('DOMContentLoaded', () => {
             const hamburgerBtn = document.getElementById('hamburgerBtn');
