@@ -4,14 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FF | Precision Fit & Curated Fashion</title>
-    <!-- 1. Add Supabase JS CDN here -->
+    <!-- Supabase JS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400">
 </head>
 <body>
 
-    <!-- 2. ADD HAMBURGER BUTTON & DRAWER HERE -->
     <!-- Left Slide-Out Hamburger Drawer -->
     <div id="navOverlay" class="drawer-overlay"></div>
     <aside id="sideDrawer" class="side-drawer">
@@ -30,49 +29,19 @@
         </nav>
     </aside>
 
-    <!-- Navigation Bar -->
-    <header style="display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: #fff; border-bottom: 1px solid #e0e0e0;">
-        <div style="display: flex; align-items: center; gap: 20px;">
-            <!-- Hamburger Button on Left -->
-            <button id="hamburgerBtn" class="hamburger-btn" aria-label="Open Navigation Menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-            <div class="logo">
-                <h2 style="letter-spacing: 4px; font-weight: 400;">FF</h2>
-            </div>
-        </div>
-
-        <div class="nav-actions">
-            <a href="login.html" style="padding: 10px 20px; background-color: #1a1a1a; color: #fff; text-decoration: none; border-radius: 4px; font-size: 13px; letter-spacing: 1px;">
-                Sign In
-            </a>
-        </div>
-    </header>
-
-    <!-- Hero Banner -->
-    <section class="hero-section">
-        <div class="hero-content">
-            <span class="tagline">Tailored to perfection</span>
-            <!-- Rest of your hero content... -->
-        </div>
-    </section>
-
-    <!-- 3. ADD PROFILE MODAL RIGHT BEFORE BODY CLOSES -->
+    <!-- User Profile & Saved Measurements Modal -->
     <div id="profileModal" class="profile-modal">
         <div class="profile-modal-content">
-            <button id="closeProfileBtn" class="close-btn" style="float: right;">&times;</button>
-            
-            <h2 id="profileWelcomeHeader" style="font-family: 'Playfair Display', serif; font-size: 28px; margin-bottom: 6px;">
-                Welcome, Guest
-            </h2>
-            <p id="profileEmailSubtext" style="font-size: 13px; color: #666; margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h2 id="profileWelcomeHeader" style="font-family: 'Playfair Display', serif; font-size: 24px;">Welcome, Guest</h2>
+                <button id="closeProfileBtn" class="close-btn">&times;</button>
+            </div>
+            <p id="profileEmailSubtext" style="font-size: 13px; color: #666; margin-bottom: 20px;">
                 Sign in to sync your sizing history across devices.
             </p>
 
             <div class="saved-data-card">
-                <h4 style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #555; margin-bottom: 12px;">
+                <h4 style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #666; margin-bottom: 8px;">
                     Your Saved Body Measurements & Sizing
                 </h4>
                 
@@ -107,16 +76,102 @@
                     </div>
                 </div>
 
-                <div id="savedHistoryList" style="margin-top: 16px; font-size: 13px; color: #444;"></div>
+                <div id="savedHistoryList" style="margin-top: 12px; font-size: 13px; color: #666;"></div>
             </div>
 
-            <button id="logoutBtn" style="margin-top: 20px; width: 100%; padding: 12px; background: #f4f4f4; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; font-size: 13px;">
+            <button id="logoutBtn" style="width: 100%; margin-top: 16px; padding: 12px; background: #fff; border: 1px solid #1a1a1a; border-radius: 4px; font-weight: 600; cursor: pointer;">
                 Sign Out
             </button>
         </div>
     </div>
 
-    <!-- Load external JS script -->
+    <!-- Header & Navigation -->
+    <header class="navbar">
+        <div class="nav-container">
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <button id="hamburgerBtn" class="hamburger-btn" aria-label="Open Navigation Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <a href="index.html" class="brand-logo">FF</a>
+            </div>
+
+            <nav class="nav-links" style="display: flex; align-items: center;">
+                <a href="index.html" style="font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--text-main); font-weight: 700;">Home</a>
+                <a href="collection.html">Collection</a>
+            </nav>
+
+            <div class="nav-actions">
+                <a href="login.html" class="cart-btn" style="text-decoration: none; font-size: 13px; letter-spacing: 1px; padding: 10px 22px;">SIGN IN</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <span class="tagline">TAILORED TO PERFECTION</span>
+            <h1>Fashion that actually fits your body.</h1>
+            <p>Say goodbye to sizing guesswork and poor quality. Discover curated style powered by interactive 3D sizing visualization.</p>
+            <a href="visualizer.html" class="cta-btn">Try Smart Visualizer</a>
+        </div>
+    </section>
+
+    <!-- Join the FF Insider Club -->
+    <section class="vip-section">
+        <div class="vip-card">
+            <h2>Join the FF Insider Club</h2>
+            <p>Get instant drop alerts, sizing recommendations, and VIP offers via SMS or Email.</p>
+
+            <div class="input-tabs">
+                <button type="button" class="tab-btn active" onclick="switchVipTab('email', this)">Email</button>
+                <button type="button" class="tab-btn" onclick="switchVipTab('sms', this)">SMS</button>
+            </div>
+
+            <form id="vipForm" class="form-input-container" onsubmit="handleVipSubmit(event)">
+                <input type="email" id="vipInput" placeholder="Enter your email address..." required>
+                <button type="submit" class="submit-btn">Join</button>
+            </form>
+            <div id="vipFeedback" class="feedback-msg"></div>
+            <span class="security-badge">🔒 Encrypted & never shared with third parties.</span>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <p>&copy; 2026 FF Precision Fit. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="collection.html">Collection</a>
+                <a href="visualizer.html">Visualizer</a>
+            </div>
+        </div>
+    </footer>
+
     <script src="script.js"></script>
+    <script>
+        function switchVipTab(type, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const input = document.getElementById('vipInput');
+            if (type === 'sms') {
+                input.type = 'tel';
+                input.placeholder = 'Enter your mobile number...';
+            } else {
+                input.type = 'email';
+                input.placeholder = 'Enter your email address...';
+            }
+        }
+
+        function handleVipSubmit(e) {
+            e.preventDefault();
+            const val = document.getElementById('vipInput').value;
+            document.getElementById('vipFeedback').style.color = '#10B981';
+            document.getElementById('vipFeedback').textContent = `Welcome to the FF Insider Club! Alerts activated for ${val}.`;
+            document.getElementById('vipForm').reset();
+        }
+    </script>
 </body>
 </html> 
