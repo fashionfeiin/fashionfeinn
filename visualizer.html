@@ -3,201 +3,503 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Try-On Visualizer | FF Precision Fit</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-
-    <!-- Left Slide-Out Hamburger Drawer -->
-    <div id="navOverlay" class="drawer-overlay"></div>
-    <aside id="sideDrawer" class="side-drawer">
-        <div class="drawer-header">
-            <span style="letter-spacing: 4px; font-weight: 600;">FF MENU</span>
-            <button id="closeDrawerBtn" class="close-btn">&times;</button>
-        </div>
-        <nav class="drawer-links">
-            <a href="index.html">Home</a>
-            <a href="collection.html">Collection</a>
-            <a href="visualizer.html">Try on Visualizer</a>
-            <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
-            <button type="button" id="openProfileBtn" class="profile-menu-btn">
-                👤 My Profile & Saved Sizes
-            </button>
-        </nav>
-    </aside>
-
-    <!-- User Profile & Saved Measurements Modal -->
-    <div id="profileModal" class="profile-modal">
-        <div class="profile-modal-content">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                <h2 id="profileWelcomeHeader" style="font-family: 'Playfair Display', serif; font-size: 24px;">Welcome, Guest</h2>
-                <button id="closeProfileBtn" class="close-btn">&times;</button>
-            </div>
-            <p id="profileEmailSubtext" style="font-size: 13px; color: #666; margin-bottom: 20px;">
-                Sign in to sync your sizing history across devices.
-            </p>
-
-            <div class="saved-data-card">
-                <h4 style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #666; margin-bottom: 8px;">
-                    Your Saved Body Measurements & Sizing
-                </h4>
-                
-                <div class="stats-grid">
-                    <div class="stat-box">
-                        <span class="stat-label">Rec. Size</span>
-                        <strong id="savedSizeDisplay" class="stat-value">M</strong>
-                    </div>
-                    <div class="stat-box">
-                        <span class="stat-label">Height</span>
-                        <strong id="savedHeightDisplay" class="stat-value">175 cm</strong>
-                    </div>
-                    <div class="stat-box">
-                        <span class="stat-label">Weight</span>
-                        <strong id="savedWeightDisplay" class="stat-value">70 kg</strong>
-                    </div>
-                    <div class="stat-box">
-                        <span class="stat-label">Chest/Bust</span>
-                        <strong id="savedChestDisplay" class="stat-value">96 cm</strong>
-                    </div>
-                    <div class="stat-box">
-                        <span class="stat-label">Waist</span>
-                        <strong id="savedWaistDisplay" class="stat-value">80 cm</strong>
-                    </div>
-                    <div class="stat-box">
-                        <span class="stat-label">Hips</span>
-                        <strong id="savedHipsDisplay" class="stat-value">98 cm</strong>
-                    </div>
-                    <div class="stat-box" style="grid-column: span 3;">
-                        <span class="stat-label">Inseam</span>
-                        <strong id="savedInseamDisplay" class="stat-value">81 cm</strong>
-                    </div>
-                </div>
-
-                <div id="savedHistoryList" style="margin-top: 12px; font-size: 13px; color: #666;"></div>
-            </div>
-
-            <button id="logoutBtn" style="width: 100%; margin-top: 16px; padding: 12px; background: #fff; border: 1px solid #1a1a1a; border-radius: 4px; font-weight: 600; cursor: pointer;">
-                Sign Out
-            </button>
-        </div>
-    </div>
-
-    <!-- Header & Navigation -->
-    <header class="navbar">
-        <div class="brand-group">
-            <button id="hamburgerBtn" class="hamburger-btn" aria-label="Open Navigation Menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-            <a href="index.html" class="brand-logo">FF</a>
-        </div>
-
-        <div class="nav-container">
-            <nav class="nav-links" style="display: flex; align-items: center;">
-                <a href="index.html">Home</a>
-                <a href="collection.html">Collection</a>
-            </nav>
-
-            <div class="nav-actions">
-                <a href="login.html" class="cart-btn" style="text-decoration: none; font-size: 13px; letter-spacing: 1px; padding: 10px 22px;">SIGN IN</a>
-            </div>
-        </div>
-    </header>
-
-    <!-- Visualizer Studio Workspace -->
-    <main class="main-layout" style="margin-top: 2rem;">
-        <div class="studio-container" style="grid-column: span 2;">
-            <div class="studio-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <div>
-                    <h2 id="activeItemTitle" style="font-family: var(--font-heading); font-size: 2rem; margin-bottom: 0.2rem;">Architectural Wool Blazer</h2>
-                    <p class="subtext">Adjust your precise dimensions below to preview fit and verify size calculation.</p>
-                </div>
-                <div class="latency-indicator">⚡ Live 3D Engine Active</div>
-            </div>
-
-            <div class="studio-workspace">
-                <!-- Left Mannequin Viewport -->
-                <div class="mannequin-viewport">
-                    <span class="subtext">Interactive Morphing Avatar</span>
-                    
-                    <div class="avatar-frame">
-                        <div class="mannequin-graphic">
-                            <div class="mannequin-head"></div>
-                            <div id="avatar-torso" class="mannequin-torso"></div>
-                            <div id="avatar-waist" class="mannequin-waist"></div>
-                            <div id="avatar-legs" class="mannequin-legs"></div>
-                        </div>
-                    </div>
-
-                    <div class="fit-verdict-badge">
-                        <span class="subtext">Recommended Size</span>
-                        <h3 id="recommended-size" class="recommended-size-tag" style="font-size: 1.8rem; font-weight: 700;">M</h3>
-                        <p id="fitConfidence" style="font-size: 11px; color: #10B981; font-weight: 600;">98% Confidence Match</p>
-                    </div>
-                </div>
-
-                <!-- Right Controls Panel -->
-                <div class="controls-panel">
-                    <div class="control-group">
-                        <label>Height: <span id="height-val">175</span> cm</label>
-                        <input type="range" id="height-input" min="140" max="210" value="175">
-                    </div>
-                    <div class="control-group">
-                        <label>Weight: <span id="weight-val">70</span> kg</label>
-                        <input type="range" id="weight-input" min="40" max="140" value="70">
-                    </div>
-                    <div class="control-group">
-                        <label>Chest / Bust: <span id="chest-val">96</span> cm</label>
-                        <input type="range" id="chest-input" min="70" max="140" value="96">
-                    </div>
-                    <div class="control-group">
-                        <label>Waist: <span id="waist-val">80</span> cm</label>
-                        <input type="range" id="waist-input" min="50" max="130" value="80">
-                    </div>
-                    <div class="control-group">
-                        <label>Hips: <span id="hips-val">98</span> cm</label>
-                        <input type="range" id="hips-input" min="70" max="140" value="98">
-                    </div>
-                    <div class="control-group">
-                        <label>Inseam: <span id="inseam-val">81</span> cm</label>
-                        <input type="range" id="inseam-input" min="60" max="100" value="81">
-                    </div>
-
-                    <button type="button" class="add-cart-action-btn" onclick="addToCartWithFit()">Save Size & Add to Cart</button>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-container">
-            <p>&copy; 2026 FF Precision Fit. All rights reserved.</p>
-            <div class="footer-links">
-                <a href="index.html">Home</a>
-                <a href="collection.html">Collection</a>
-                <a href="visualizer.html">Visualizer</a>
-            </div>
-        </div>
-    </footer>
-
-    <script src="script.js"></script>
-    <script>
-        // Check URL parameters if user clicked a specific item from collection.html
-        const urlParams = new URLSearchParams(window.location.search);
-        const selectedItem = urlParams.get('item');
-        if (selectedItem) {
-            document.getElementById('activeItemTitle').textContent = selectedItem;
+    <title>FF | 3D Precision Fit Visualizer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #FAFAFA;
+            --bg-surface: #FFFFFF;
+            --text-main: #1A1A1A;
+            --text-muted: #64748B;
+            --accent: #1A1A1A;
+            --accent-hover: #333333;
+            --border-color: #E2E8F0;
+            --radius-sm: 6px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.04);
+            --transition-fast: 0.2s ease;
         }
 
-        function addToCartWithFit() {
-            const size = document.getElementById('recommended-size').textContent;
-            const item = document.getElementById('activeItemTitle').textContent;
-            alert(`Success! Added ${item} (Size: ${size}) to your cart with your custom sizing profile.`);
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
-    </script>
-</body>
-</html>  
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        /* 1. HEADER & NAVIGATION */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 40px;
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .hamburger-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            padding: 6px;
+        }
+
+        .hamburger-btn span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background-color: var(--text-main);
+            transition: var(--transition-fast);
+        }
+
+        .brand-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            letter-spacing: 5px;
+            text-decoration: none;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .cart-trigger-btn {
+            background: #F1F5F9;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px 16px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .cart-trigger-btn:hover {
+            background: #E2E8F0;
+        }
+
+        .btn-primary {
+            background: #1a1a1a;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            letter-spacing: 1px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* 2. LEFT SLIDE-OUT HAMBURGER DRAWER */
+        .drawer-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease;
+        }
+
+        .drawer-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .side-drawer {
+            position: fixed;
+            top: 0;
+            left: -320px;
+            width: 300px;
+            height: 100vh;
+            background: #fff;
+            z-index: 201;
+            padding: 24px;
+            box-shadow: 4px 0 25px rgba(0, 0, 0, 0.1);
+            transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .side-drawer.open {
+            left: 0;
+        }
+
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 26px;
+            line-height: 1;
+            cursor: pointer;
+            color: var(--text-main);
+        }
+
+        .drawer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .drawer-links a {
+            text-decoration: none;
+            color: var(--text-main);
+            font-size: 15px;
+            font-weight: 500;
+            padding: 6px 0;
+            transition: color var(--transition-fast);
+        }
+
+        .drawer-links a:hover {
+            color: var(--text-muted);
+        }
+
+        .profile-menu-btn {
+            background: #F8FAFC;
+            border: 1px solid var(--border-color);
+            padding: 12px 14px;
+            border-radius: var(--radius-sm);
+            text-align: left;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .profile-menu-btn:hover {
+            background: #F1F5F9;
+        }
+
+        /* 3. USER PROFILE MODAL */
+        .profile-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .profile-modal.open {
+            display: flex;
+        }
+
+        .profile-modal-content {
+            background: #fff;
+            width: 100%;
+            max-width: 460px;
+            border-radius: var(--radius-md);
+            padding: 32px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            position: relative;
+        }
+
+        .saved-data-card {
+            background: #F8FAFC;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .stat-box {
+            background: #fff;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #eee;
+            text-align: center;
+        }
+
+        .stat-label {
+            display: block;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            color: var(--text-main);
+        }
+
+        /* 4. MAIN VISUALIZER STUDIO LAYOUT */
+        .visualizer-wrapper {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 24px;
+        }
+
+        .studio-container {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .studio-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .studio-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 600;
+        }
+
+        .subtext {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Garment Switcher Pills */
+        .garment-selector {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .garment-pill {
+            padding: 8px 16px;
+            border: 1px solid var(--border-color);
+            background: #fff;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .garment-pill.active {
+            background: var(--text-main);
+            color: #fff;
+            border-color: var(--text-main);
+        }
+
+        /* Privacy Toggle Switch */
+        .data-privacy-card {
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: var(--radius-sm);
+            padding: 1rem 1.25rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .privacy-toggle-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 46px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background-color: #CBD5E1;
+            transition: .3s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(22px);
+        }
+
+        /* Workspace Grid */
+        .studio-workspace {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 2.5rem;
+        }
+
+        @media (max-width: 860px) {
+            .studio-workspace {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Mannequin Viewport & Realistic Sculpted SVG */
+        .mannequin-viewport {
+            background: radial-gradient(circle at center, #FFFFFF 0%, #EEF2F6 100%);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 480px;
+            position: relative;
+        }
+
+        .viewport-badges {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .avatar-frame {
+            height: 330px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        #mannequin-svg {
+            height: 310px;
+            width: auto;
+            transition: transform 0.15s ease-out;
+            filter: drop-shadow(0 12px 18px rgba(0,0,0,0.08));
+        }
+
+        .fit-verdict-badge {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            padding: 1rem 1.25rem;
+            border-radius: var(--radius-sm);
+            text-align: center;
+            width: 100%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .recommended-size-tag {
+            color: var(--text-main);
+            font-size: 16px;
+            margin: 0.25rem 0;
+        }
+
+        .recommended-size-tag strong {
+            background: var(--text-main);
+            color: #fff;
+            padding: 2px 10px;
+            border-radius: 4px;
+            margin-left: 4px;
+        }
+
+        .latency-indicator {
+            font-size: 0.75rem;
+            color: #10B981;
+            font-weight: 600;
+        }
+
+        /* Controls Panel */
+        .controls-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 1.25rem;
+        }
+
+        .control-section-title {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        /* Skin Tone Swatches */
+        .skin-tone-picker {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .tone-swatch {
+            width: 32px;
+            height: 32px;
+            border
