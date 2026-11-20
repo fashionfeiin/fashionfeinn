@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FF | Curated Collection Manager</title>
-    <!-- Supabase JS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,400&display=swap" rel="stylesheet">
     <style>
@@ -35,7 +34,6 @@
             scroll-behavior: smooth;
         }
 
-        /* Navigation & Header */
         header {
             background-color: var(--bg-card);
             border-bottom: 1px solid var(--border-light);
@@ -387,7 +385,7 @@
             cursor: pointer;
         }
 
-        /* Modals & Profile Popup */
+        /* Modals */
         .modal-backdrop {
             position: fixed;
             inset: 0;
@@ -428,7 +426,7 @@
             margin-bottom: 16px;
         }
 
-        /* Expanded Measurements Grid */
+        /* Measurements Grid */
         .saved-data-card {
             background: var(--bg-primary);
             border: 1px solid var(--border-light);
@@ -583,27 +581,21 @@
         <p>Browse the curated catalog or add your own custom pieces, photos, directly to your AI mannequin.</p> 
     </section>
 
-    <!-- FILTER BAR -->
     <div class="filter-bar" id="filterBar"></div>
-
-    <!-- PRODUCT COLLECTION GRID -->
     <main class="collection-grid" id="collectionGrid"></main>
 
-    <!-- User Profile & Saved Measurements Modal -->
+    <!-- User Profile Modal -->
     <div class="modal-backdrop" id="profileModal">
         <div class="modal-card">
             <button class="close-modal" id="closeProfileBtn">&times;</button>
-            
             <h3 id="profileWelcomeHeader" style="margin-bottom: 6px;">Welcome, Guest</h3>
             <p id="profileEmailSubtext" style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
                 Sign in to sync your sizing history across devices.
             </p>
-
             <div class="saved-data-card">
                 <h4 style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 8px;">
                     Your Saved Body Measurements & Sizing
                 </h4>
-                
                 <div class="stats-grid">
                     <div class="stat-box">
                         <span class="stat-label">Rec. Size</span>
@@ -634,10 +626,8 @@
                         <strong id="savedInseamDisplay" class="stat-value">81 cm</strong>
                     </div>
                 </div>
-
                 <div id="savedHistoryList" style="margin-top: 12px; font-size: 13px; color: var(--text-muted);"></div>
             </div>
-
             <button id="logoutBtn" class="btn-outline" style="width: 100%;">Sign Out</button>
         </div>
     </div>
@@ -650,40 +640,34 @@
             <form id="addItemForm" onsubmit="handleAddItem(event)">
                 <div class="form-group">
                     <label for="itemName">Item / Look Name *</label>
-                    <input type="text" id="itemName" placeholder="e.g., "Flared Sweatsuit", required> 
+                    <input type="text" id="itemName" placeholder="e.g., Green FF suit" required>
                 </div>
-
                 <div class="form-row">
                     <div class="form-group">
                         <label for="itemCategory">Collection Tag *</label>
-                        <input type="text" id="itemCategory" placeholder="e.g., Sweatsuits, Sweats, Sweaters" required> 
+                        <input type="text" id="itemCategory" placeholder="e.g., Sweatsuits, Sweats, Sweaters" required>
                     </div>
                     <div class="form-group">
                         <label for="itemPrice">Price ($) *</label>
-                        <input type="number" id="itemPrice" min="1" step="0.01" placeholder="120" required> 
+                        <input type="number" id="itemPrice" min="1" step="0.01" placeholder="120" required>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label for="itemFit">Fit / Silhouette Profile</label>
                     <input type="text" id="itemFit" placeholder="e.g., Relaxed / Boxy, Tailored">
                 </div>
-
                 <div class="form-group">
                     <label for="itemDetails">Details / Included Pieces (comma separated)</label>
-                    <textarea id="itemDetails" rows="2" placeholder="e.g., 480gsm French terry cotton, Flared Sweatsuit, Pre-shrunk"></textarea>
+                    <textarea id="itemDetails" rows="2" placeholder="e.g., 480gsm French terry cotton, Drop shoulder"></textarea>
                 </div>
-
                 <div class="form-group">
                     <label for="itemImageFile">Upload Clothing Photo (Optional)</label>
                     <input type="file" id="itemImageFile" accept="image/*">
                 </div>
-
                 <div class="form-group">
                     <label for="itemImageUrl">Or Paste Image URL (Optional)</label>
                     <input type="url" id="itemImageUrl" placeholder="https://example.com/shirt.jpg">
                 </div>
-
                 <button type="submit" class="full-btn">Publish to FF Collection</button>
             </form>
         </div>
@@ -696,182 +680,72 @@
             <div class="fit-tag" id="modalCategory">CATEGORY</div>
             <h3 id="modalTitle">Item Name</h3>
             <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;" id="modalSpecs">Fit Profile</p>
-            
             <label style="font-size: 12px; font-weight: 600; text-transform: uppercase;">Select Size</label>
             <div class="size-options">
-                <button type="button" class="size-choice" onclick="selectSize(this, 'XS')">XS</button>
-                <button type="button" class="size-choice" onclick="selectSize(this, 'S')">S</button>
-                <button type="button" class="size-choice selected" onclick="selectSize(this, 'M')">M</button>
-                <button type="button" class="size-choice" onclick="selectSize(this, 'L')">L</button>
-                <button type="button" class="size-choice" onclick="selectSize(this, 'XL')">XL</button>
+                <button type="button" class="size-choice" onclick="selectSize(this)">XS</button>
+                <button type="button" class="size-choice" onclick="selectSize(this)">S</button>
+                <button type="button" class="size-choice selected" onclick="selectSize(this)">M</button>
+                <button type="button" class="size-choice" onclick="selectSize(this)">L</button>
+                <button type="button" class="size-choice" onclick="selectSize(this)">XL</button>
             </div>
-
             <button class="full-btn" onclick="confirmAddToBag()">Add to Bag — <span id="modalPrice">$0</span></button>
         </div>
     </div>
 
     <script>
-        const SUPABASE_URL = 'https://uilzexhyrpzrwhitthow.supabase.co';  
-        const SUPABASE_ANON_KEY = 'https://sb_publishable_dqsyUaS0Ba58WDCRSNz1dA_MpRUMHT1';  
+        const SUPABASE_URL = 'https://'https://uilzexhyrpzrwhitthow.supabase.co';  
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'sb_publishable_dqsyUaS0Ba58WDCRSNz1dA_MpRUMHT1;
         const supabaseClient = (window.supabase && SUPABASE_URL !== 'https://YOUR_SUPABASE_PROJECT_ID.supabase.co')
-            ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+            ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)   
             : null;
 
         const defaultItems = [
             {
-        const defaultItems = [
-            {
-                name: "Black FF Set",
-                pieces: ["480gsm French terry boxy hoodie", "Flared Sweatpants", "Embroidered FF chest crest"],
+                id: "FF-DEFAULT-1",
+                name: "Green FF suit",
+                pieces: ["480gsm French terry hoodie", "Matching heavyweight sweatpants", "Embroidered FF chest crest"],
                 fitProfile: "Relaxed / Boxy",
-                category: "Sweatsuit",
+                category: "Sweatsuits",
                 price: 240,
-                imageUrl: "",
-                gradient: "linear-gradient(135deg, #2c2c2c 0%, #4a4a4a 100%)"
-            },
-            { 
-                name: "Pink FF Set",
-                pieces: ["480gsm French terry boxy hoodie", "Flared Sweatpants", "Embroidered FF chest crest"], 
-                fitProfile: "Relaxed / Boxy", 
-                category: "Sweatsuit",
-                price: 135,
                 imageUrl: "",
                 gradient: "linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%)"
             },
-            {
-                name: "Green FF Set",
-                pieces: ["480gsm French terry boxy hoodie", "Flared Sweatpants", "Embroidered FF chest crest"], 
-                fitProfile: "Relaxed / Boxy",
-                category: "Sweatsuit",
-                price: 185,
+            { 
+                id: "FF-DEFAULT-2",
+                name: "Pink FF suit",
+                pieces: ["Brushed cotton fleece hoodie", "Matching relaxed sweatpants", "Signature branding"],
+                fitProfile: "Sculpted / Tapered",
+                category: "Sweatsuits",
+                price: 220,
                 imageUrl: "",
-                gradient: "linear-gradient(135deg, #cbb9a8 0%, #e3d5ca 100%)"
+                gradient: "linear-gradient(135deg, #d5b3c8 0%, #e8c5dc 100%)"
+            },
+            {
+                id: "FF-DEFAULT-3",
+                name: "Black FF suit",
+                pieces: ["Heavyweight black hoodie", "Matching tapered sweatpants", "Monochrome FF embroidery"],
+                fitProfile: "Slouchy / Architectural",
+                category: "Sweatsuits",
+                price: 250,
+                imageUrl: "",
+                gradient: "linear-gradient(135deg, #1a1a1a 0%, #333333 100%)"
             }
         ];
 
-        // Using a fresh storage key so the old city items are replaced automatically
-        let ffCollection = JSON.parse(localStorage.getItem('ff_collection_v2')) || defaultItems;
+        let ffCollection = JSON.parse(localStorage.getItem('ff_collection_v3')) || defaultItems;
         let currentFilter = 'All';
         let cartCount = 0;
         let selectedItem = null;
 
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const hamburgerBtn = document.getElementById('hamburgerBtn');
-            const sideDrawer = document.getElementById('sideDrawer');
-            const navOverlay = document.getElementById('navOverlay');
-            const closeDrawerBtn = document.getElementById('closeDrawerBtn');
-            const openProfileBtn = document.getElementById('openProfileBtn');
-            const profileModal = document.getElementById('profileModal');
-            const closeProfileBtn = document.getElementById('closeProfileBtn');
-
-            function openDrawer() {
-                sideDrawer?.classList.add('open');
-                navOverlay?.classList.add('active');
-            }
-
-            function closeDrawer() {
-                sideDrawer?.classList.remove('open');
-                navOverlay?.classList.remove('active');
-            }
-
-            hamburgerBtn?.addEventListener('click', openDrawer);
-            closeDrawerBtn?.addEventListener('click', closeDrawer);
-            navOverlay?.addEventListener('click', closeDrawer);
-
-            openProfileBtn?.addEventListener('click', async () => {
-                closeDrawer();
-                await loadUserProfileData();
-                profileModal.style.display = 'flex';
-            });
-
-            closeProfileBtn?.addEventListener('click', () => {
-                profileModal.style.display = 'none';
-            });
-
-            renderFilters();
-            renderCollection();
-        });
-
-        async function loadUserProfileData() {
-            let userName = 'Guest';
-            let userIdentifier = null;
-
-            if (supabaseClient) {
-                const { data: { user } } = await supabaseClient.auth.getUser();
-                if (user) {
-                    userIdentifier = user.email || user.phone;
-                    userName = user.user_metadata?.full_name || userIdentifier.split('@')[0];
-                }
-            }
-
-            if (!userIdentifier) {
-                const localSession = JSON.parse(localStorage.getItem('auraUserSession') || 'null');
-                if (localSession && localSession.user) {
-                    userIdentifier = localSession.user;
-                    userName = localSession.name || userIdentifier.split('@')[0];
-                }
-            }
-
-            const formattedName = userName.charAt(0).toUpperCase() + userName.slice(1);
-            document.getElementById('profileWelcomeHeader').textContent = `Welcome, ${formattedName}`;
-            document.getElementById('profileEmailSubtext').textContent = userIdentifier 
-                ? `Signed in as ${userIdentifier}` 
-                : 'Sign in to sync your sizing history across devices.';
-
-            let savedData = JSON.parse(localStorage.getItem('ff_saved_sizing') || 'null');
-
-            if (supabaseClient && userIdentifier) {
-                const { data, error } = await supabaseClient
-                    .from('user_profiles')
-                    .select('*')
-                    .eq('identifier', userIdentifier)
-                    .single();
-
-                if (data && !error) {
-                    savedData = {
-                        recommended_size: data.recommended_size || 'M',
-                        height: data.height || 175,
-                        weight: data.weight || 70,
-                        chest: data.chest || 96,
-                        waist: data.waist || 80,
-                        hips: data.hips || 98,
-                        inseam: data.inseam || 81,
-                        last_item: data.last_item || 'Architectural Wool Blazer'
-                    };
-                }
-            }
-
-            if (savedData) {
-                document.getElementById('savedSizeDisplay').textContent = savedData.recommended_size || 'M';
-                document.getElementById('savedHeightDisplay').textContent = `${savedData.height || 175} cm`;
-                document.getElementById('savedWeightDisplay').textContent = `${savedData.weight || 70} kg`;
-                document.getElementById('savedChestDisplay').textContent = `${savedData.chest || 96} cm`;
-                document.getElementById('savedWaistDisplay').textContent = `${savedData.waist || 80} cm`;
-                document.getElementById('savedHipsDisplay').textContent = `${savedData.hips || 98} cm`;
-                document.getElementById('savedInseamDisplay').textContent = `${savedData.inseam || 81} cm`;
-                
-                document.getElementById('savedHistoryList').innerHTML = `
-                    <p><strong>Last Fitted Item:</strong> ${savedData.last_item || 'Custom Look'} — Size <strong>${savedData.recommended_size}</strong></p>
-                `;
-            }
-        }
-
-        document.getElementById('logoutBtn')?.addEventListener('click', async () => {
-            if (supabaseClient) await supabaseClient.auth.signOut();
-            localStorage.removeItem('auraUserSession');
-            document.getElementById('profileModal').style.display = 'none';
-            window.location.reload();
-        });
         function saveCollection() {
-            localStorage.setItem('ff_collection_v2', JSON.stringify(ffCollection));
+            localStorage.setItem('ff_collection_v3', JSON.stringify(ffCollection));
         }
 
         function renderFilters() {
             const filterBar = document.getElementById('filterBar');
+            if (!filterBar) return;
+
             const fixedCategories = ['All', 'Sweatsuits', 'Sweats', 'Sweaters'];
-            
-            // Include any new custom tags if you add them later, without duplicates
             const extraCategories = [...new Set(ffCollection.map(item => item.category))]
                 .filter(cat => !fixedCategories.includes(cat));
             const categories = [...fixedCategories, ...extraCategories];
@@ -880,8 +754,7 @@
                 <button class="filter-btn ${currentFilter === cat ? 'active' : ''}" onclick="setFilter('${cat.replace(/'/g, "\\'")}')">
                     ${cat === 'All' ? 'All Items' : cat}
                 </button>
-            `).join(''); 
-        
+            `).join('');
         }
 
         function setFilter(category) {
@@ -892,6 +765,8 @@
 
         function renderCollection() {
             const grid = document.getElementById('collectionGrid');
+            if (!grid) return;
+
             const filteredItems = currentFilter === 'All'
                 ? ffCollection
                 : ffCollection.filter(item => item.category === currentFilter);
@@ -953,7 +828,7 @@
                 const newItem = {
                     id: 'FF-' + Date.now(), 
                     name,
-                        pieces,
+                    pieces,
                     fitProfile,
                     category,
                     price,
@@ -983,9 +858,6 @@
         function deleteItem(identifier) {
             ffCollection = ffCollection.filter(item => (item.id || item.name) !== identifier);
             saveCollection();
-            if (!ffCollection.some(item => item.category === currentFilter)) {
-                currentFilter = 'All';
-            }
             renderFilters();
             renderCollection();
         }
@@ -1015,6 +887,114 @@
             document.getElementById('cartCount').textContent = cartCount;
             closeFitModal();
         }
+
+        async function loadUserProfileData() {
+            let userName = 'Guest';
+            let userIdentifier = null;
+
+            if (supabaseClient) {
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                if (user) {
+                    userIdentifier = user.email || user.phone;
+                    userName = user.user_metadata?.full_name || userIdentifier.split('@')[0];
+                }
+            }
+
+            if (!userIdentifier) {
+                const localSession = JSON.parse(localStorage.getItem('auraUserSession') || 'null');
+                if (localSession && localSession.user) {
+                    userIdentifier = localSession.user;
+                    userName = localSession.name || userIdentifier.split('@')[0];
+                }
+            }
+
+            const formattedName = userName.charAt(0).toUpperCase() + userName.slice(1);
+            document.getElementById('profileWelcomeHeader').textContent = `Welcome, ${formattedName}`;
+            document.getElementById('profileEmailSubtext').textContent = userIdentifier 
+                ? `Signed in as ${userIdentifier}` 
+                : 'Sign in to sync your sizing history across devices.';
+
+            let savedData = JSON.parse(localStorage.getItem('ff_saved_sizing') || 'null');
+
+            if (supabaseClient && userIdentifier) {
+                const { data, error } = await supabaseClient
+                    .from('user_profiles')
+                    .select('*')
+                    .eq('identifier', userIdentifier)
+                    .single();
+
+                if (data && !error) {
+                    savedData = {
+                        recommended_size: data.recommended_size || 'M',
+                        height: data.height || 175,
+                        weight: data.weight || 70,
+                        chest: data.chest || 96,
+                        waist: data.waist || 80,
+                        hips: data.hips || 98,
+                        inseam: data.inseam || 81,
+                        last_item: data.last_item || 'Green FF suit'
+                    };
+                }
+            }
+
+            if (savedData) {
+                document.getElementById('savedSizeDisplay').textContent = savedData.recommended_size || 'M';
+                document.getElementById('savedHeightDisplay').textContent = `${savedData.height || 175} cm`;
+                document.getElementById('savedWeightDisplay').textContent = `${savedData.weight || 70} kg`;
+                document.getElementById('savedChestDisplay').textContent = `${savedData.chest || 96} cm`;
+                document.getElementById('savedWaistDisplay').textContent = `${savedData.waist || 80} cm`;
+                document.getElementById('savedHipsDisplay').textContent = `${savedData.hips || 98} cm`;
+                document.getElementById('savedInseamDisplay').textContent = `${savedData.inseam || 81} cm`;
+                
+                document.getElementById('savedHistoryList').innerHTML = `
+                    <p><strong>Last Fitted Item:</strong> ${savedData.last_item || 'Custom Look'} — Size <strong>${savedData.recommended_size}</strong></p>
+                `;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            const sideDrawer = document.getElementById('sideDrawer');
+            const navOverlay = document.getElementById('navOverlay');
+            const closeDrawerBtn = document.getElementById('closeDrawerBtn');
+            const openProfileBtn = document.getElementById('openProfileBtn');
+            const profileModal = document.getElementById('profileModal');
+            const closeProfileBtn = document.getElementById('closeProfileBtn');
+
+            function openDrawer() {
+                sideDrawer?.classList.add('open');
+                navOverlay?.classList.add('active');
+            }
+
+            function closeDrawer() {
+                sideDrawer?.classList.remove('open');
+                navOverlay?.classList.remove('active');
+            }
+
+            hamburgerBtn?.addEventListener('click', openDrawer);
+            closeDrawerBtn?.addEventListener('click', closeDrawer);
+            navOverlay?.addEventListener('click', closeDrawer);
+
+            openProfileBtn?.addEventListener('click', async () => {
+                closeDrawer();
+                await loadUserProfileData();
+                profileModal.style.display = 'flex';
+            });
+
+            closeProfileBtn?.addEventListener('click', () => {
+                profileModal.style.display = 'none';
+            });
+
+            document.getElementById('logoutBtn')?.addEventListener('click', async () => {
+                if (supabaseClient) await supabaseClient.auth.signOut();
+                localStorage.removeItem('auraUserSession');
+                profileModal.style.display = 'none';
+                window.location.reload();
+            });
+
+            renderFilters();
+            renderCollection();
+        });
     </script>
 </body>
-</html> 
+</html>
