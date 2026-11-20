@@ -3,541 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FF | Curated Collection Manager</title>
+    <title>Collection | FF Precision Fit</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,400&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-primary: #faf9f6;
-            --bg-card: #ffffff;
-            --text-main: #141414;
-            --text-muted: #666666;
-            --accent: #141414;
-            --border-light: #e5e4e0;
-            --danger: #b91c1c;
-            --radius-sm: 6px;
-            --radius-md: 8px;
-            --shadow-soft: 0 12px 35px rgba(0, 0, 0, 0.15);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            background-color: var(--bg-primary);
-            color: var(--text-main);
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            line-height: 1.6;
-            scroll-behavior: smooth;
-        }
-
-        header {
-            background-color: var(--bg-card);
-            border-bottom: 1px solid var(--border-light);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .nav-container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 18px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .brand-logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 28px;
-            font-weight: 700;
-            letter-spacing: 4px;
-            text-decoration: none;
-            color: var(--text-main);
-        }
-
-        .nav-actions {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .btn-primary {
-            background: var(--text-main);
-            color: #fff;
-            border: 1px solid var(--text-main);
-            padding: 9px 18px;
-            font-size: 13px;
-            font-weight: 600;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-
-        .btn-primary:hover {
-            opacity: 0.85;
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--text-main);
-            padding: 9px 16px;
-            font-size: 13px;
-            font-weight: 600;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: var(--text-main);
-            text-decoration: none;
-        }
-
-        .btn-outline:hover {
-            background: var(--text-main);
-            color: #fff;
-        }
-
-        /* Hamburger Drawer Styles */
-        .hamburger-btn {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            width: 24px;
-            height: 18px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0;
-        }
-
-        .hamburger-btn span {
-            display: block;
-            width: 100%;
-            height: 2px;
-            background-color: var(--text-main);
-        }
-
-        .drawer-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.4);
-            display: none;
-            z-index: 998;
-        }
-
-        .drawer-overlay.active {
-            display: block;
-        }
-
-        .side-drawer {
-            position: fixed;
-            top: 0;
-            left: -300px;
-            width: 280px;
-            height: 100vh;
-            background: var(--bg-card);
-            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
-            padding: 28px 24px;
-            transition: left 0.3s ease;
-            z-index: 999;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .side-drawer.open {
-            left: 0;
-        }
-
-        .drawer-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 32px;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 26px;
-            cursor: pointer;
-            color: var(--text-main);
-            line-height: 1;
-        }
-
-        .drawer-links {
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-        }
-
-        .drawer-links a {
-            text-decoration: none;
-            color: var(--text-main);
-            font-size: 16px;
-            font-weight: 500;
-        }
-
-        .profile-menu-btn {
-            text-align: left;
-            background: var(--bg-primary);
-            border: 1px solid var(--border-light);
-            padding: 12px 14px;
-            border-radius: var(--radius-sm);
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            color: var(--text-main);
-        }
-
-        /* Hero Banner */
-        .collection-hero {
-            text-align: center;
-            padding: 56px 24px 32px;
-            max-width: 760px;
-            margin: 0 auto;
-        }
-
-        .collection-hero h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 36px;
-            font-weight: 500;
-            margin-bottom: 10px;
-        }
-
-        .collection-hero p {
-            color: var(--text-muted);
-            font-size: 18px;
-        }
-
-        /* Filter Bar */
-        .filter-bar {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            padding: 0 24px 36px;
-            max-width: 1280px;
-            margin: 0 auto;
-        }
-
-        .filter-btn {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-light);
-            padding: 8px 18px;
-            border-radius: 30px;
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .filter-btn:hover {
-            border-color: var(--text-main);
-            color: var(--text-main);
-        }
-
-        .filter-btn.active {
-            background-color: var(--text-main);
-            color: #ffffff;
-            border-color: var(--text-main);
-        }
-
-        /* Product Grid */
-        .collection-grid {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 24px 80px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 28px;
-        }
-
-        .product-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-light);
-            border-radius: 6px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
-            position: relative;
-        }
-
-        .product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
-        }
-
-        .card-visual {
-            height: 290px;
-            position: relative;
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            padding: 16px;
-            background-size: cover;
-            background-position: center;
-            background-color: #eae8e3;
-        }
-
-        .category-badge {
-            background-color: rgba(255, 255, 255, 0.92);
-            color: var(--text-main);
-            padding: 5px 12px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-radius: 3px;
-        }
-
-        .delete-item-btn {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            font-size: 16px;
-            color: var(--text-muted);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-
-        .delete-item-btn:hover {
-            background: var(--danger);
-            color: #fff;
-        }
-
-        .card-body {
-            padding: 22px;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-
-        .fit-tag {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-muted);
-            margin-bottom: 6px;
-        }
-
-        .card-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .pieces-list {
-            list-style: none;
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-bottom: 20px;
-            flex-grow: 1;
-        }
-
-        .pieces-list li {
-            margin-bottom: 4px;
-            padding-left: 12px;
-            position: relative;
-        }
-
-        .pieces-list li::before {
-            content: "•";
-            position: absolute;
-            left: 0;
-            color: var(--text-main);
-        }
-
-        .card-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 16px;
-            border-top: 1px solid var(--border-light);
-        }
-
-        .price {
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .fit-btn {
-            background-color: var(--text-main);
-            color: #ffffff;
-            border: none;
-            padding: 9px 16px;
-            font-size: 13px;
-            font-weight: 500;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        /* Modals */
-        .modal-backdrop {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.55);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            padding: 20px;
-        }
-
-        .modal-card {
-            background: var(--bg-card);
-            max-width: 480px;
-            width: 100%;
-            padding: 32px;
-            border-radius: var(--radius-md);
-            position: relative;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: var(--shadow-soft);
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 16px;
-            right: 20px;
-            font-size: 24px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: var(--text-muted);
-        }
-
-        .modal-card h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 24px;
-            margin-bottom: 16px;
-        }
-
-        /* Measurements Grid */
-        .saved-data-card {
-            background: var(--bg-primary);
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-sm);
-            padding: 16px;
-            margin-bottom: 20px;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .stat-box {
-            background: #fff;
-            padding: 10px;
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--border-light);
-            text-align: center;
-        }
-
-        .stat-label {
-            display: block;
-            font-size: 10px;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 2px;
-            letter-spacing: 0.5px;
-        }
-
-        .stat-value {
-            font-size: 16px;
-            color: var(--text-main);
-            font-weight: bold;
-        }
-
-        /* Form Styles */
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 6px;
-            color: var(--text-main);
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid var(--border-light);
-            border-radius: 4px;
-            font-family: inherit;
-            font-size: 14px;
-            background: var(--bg-primary);
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--text-main);
-            background: #fff;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .size-options {
-            display: flex;
-            gap: 10px;
-            margin: 14px 0 22px;
-        }
-
-        .size-choice {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid var(--border-light);
-            background: var(--bg-primary);
-            cursor: pointer;
-            font-weight: 600;
-            border-radius: 4px;
-        }
-
-        .size-choice.selected {
-            border-color: var(--text-main);
-            background: var(--text-main);
-            color: #fff;
-        }
-
-        .full-btn {
-            width: 100%;
-            padding: 13px;
-            background: var(--text-main);
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
@@ -552,51 +21,29 @@
             <a href="index.html">Home</a>
             <a href="collection.html">Collection</a>
             <a href="visualizer.html">Try on Visualizer</a>
-            <hr style="border: 0; border-top: 1px solid var(--border-light); margin: 10px 0;">
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
             <button type="button" id="openProfileBtn" class="profile-menu-btn">
                 👤 My Profile & Saved Sizes
             </button>
         </nav>
     </aside>
 
-    <header>
-        <div class="nav-container">
-            <div style="display: flex; align-items: center; gap: 16px;">
-                <button id="hamburgerBtn" class="hamburger-btn" aria-label="Open Navigation Menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-                <a href="index.html" class="brand-logo">FF</a> 
+    <!-- User Profile & Saved Measurements Modal -->
+    <div id="profileModal" class="profile-modal">
+        <div class="profile-modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h2 id="profileWelcomeHeader" style="font-family: 'Playfair Display', serif; font-size: 24px;">Welcome, Guest</h2>
+                <button id="closeProfileBtn" class="close-btn">&times;</button>
             </div>
-            <div class="nav-actions">
-                <button class="btn-primary" onclick="openAddModal()">+ Add Clothing Item</button>
-                <button class="btn-outline" id="cartBtn">Bag (<span id="cartCount">0</span>)</button>
-            </div>
-        </div>
-    </header>
-
-    <section class="collection-hero" id="collection-section">
-        <h1>FF Collection</h1>
-        <p>Browse the curated catalog or add your own custom pieces, photos, directly to your AI mannequin.</p> 
-    </section>
-
-    <!-- FILTER BAR & COLLECTION GRID -->
-    <div class="filter-bar" id="filterBar"></div>
-    <main class="collection-grid" id="collectionGrid"></main>
-
-    <!-- User Profile Modal -->
-    <div class="modal-backdrop" id="profileModal">
-        <div class="modal-card">
-            <button class="close-modal" id="closeProfileBtn">&times;</button>
-            <h3 id="profileWelcomeHeader" style="margin-bottom: 6px;">Welcome, Guest</h3>
-            <p id="profileEmailSubtext" style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
+            <p id="profileEmailSubtext" style="font-size: 13px; color: #666; margin-bottom: 20px;">
                 Sign in to sync your sizing history across devices.
             </p>
+
             <div class="saved-data-card">
-                <h4 style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 8px;">
+                <h4 style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #666; margin-bottom: 8px;">
                     Your Saved Body Measurements & Sizing
                 </h4>
+                
                 <div class="stats-grid">
                     <div class="stat-box">
                         <span class="stat-label">Rec. Size</span>
@@ -627,375 +74,90 @@
                         <strong id="savedInseamDisplay" class="stat-value">81 cm</strong>
                     </div>
                 </div>
-                <div id="savedHistoryList" style="margin-top: 12px; font-size: 13px; color: var(--text-muted);"></div>
+
+                <div id="savedHistoryList" style="margin-top: 12px; font-size: 13px; color: #666;"></div>
             </div>
-            <button id="logoutBtn" class="btn-outline" style="width: 100%;">Sign Out</button>
+
+            <button id="logoutBtn" style="width: 100%; margin-top: 16px; padding: 12px; background: #fff; border: 1px solid #1a1a1a; border-radius: 4px; font-weight: 600; cursor: pointer;">
+                Sign Out
+            </button>
         </div>
     </div>
 
-    <!-- Add New Clothing Item Modal -->
-    <div class="modal-backdrop" id="addModal">
-        <div class="modal-card">
-            <button class="close-modal" onclick="closeAddModal()">&times;</button>
-            <h3>Add New Clothing Item</h3>
-            <form id="addItemForm" onsubmit="handleAddItem(event)">
-                <div class="form-group">
-                    <label for="itemName">Item / Look Name *</label>
-                    <input type="text" id="itemName" placeholder="e.g., Green FF suit" required>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="itemCategory">Collection Tag *</label>
-                        <input type="text" id="itemCategory" placeholder="e.g., Sweatsuits, Sweats, Sweaters" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="itemPrice">Price ($) *</label>
-                        <input type="number" id="itemPrice" min="1" step="0.01" placeholder="120" required>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="itemFit">Fit / Silhouette Profile</label>
-                    <input type="text" id="itemFit" placeholder="e.g., Relaxed / Boxy, Tailored">
-                </div>
-                <div class="form-group">
-                    <label for="itemDetails">Details / Included Pieces (comma separated)</label>
-                    <textarea id="itemDetails" rows="2" placeholder="e.g., 480gsm French terry cotton, Drop shoulder"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="itemImageFile">Upload Clothing Photo (Optional)</label>
-                    <input type="file" id="itemImageFile" accept="image/*">
-                </div>
-                <div class="form-group">
-                    <label for="itemImageUrl">Or Paste Image URL (Optional)</label>
-                    <input type="url" id="itemImageUrl" placeholder="https://example.com/shirt.jpg">
-                </div>
-                <button type="submit" class="full-btn">Publish to FF Collection</button>
-            </form>
+    <!-- Header & Navigation -->
+    <header class="navbar">
+        <div class="brand-group">
+            <button id="hamburgerBtn" class="hamburger-btn" aria-label="Open Navigation Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <a href="index.html" class="brand-logo">FF</a>
         </div>
-    </div>
 
-    <!-- Quick Fit & Add to Bag Modal -->
-    <div class="modal-backdrop" id="fitModal">
-        <div class="modal-card">
-            <button class="close-modal" onclick="closeFitModal()">&times;</button>
-            <div class="fit-tag" id="modalCategory">CATEGORY</div>
-            <h3 id="modalTitle">Item Name</h3>
-            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;" id="modalSpecs">Fit Profile</p>
-            <label style="font-size: 12px; font-weight: 600; text-transform: uppercase;">Select Size</label>
-            <div class="size-options">
-                <button type="button" class="size-choice" onclick="selectSize(this)">XS</button>
-                <button type="button" class="size-choice" onclick="selectSize(this)">S</button>
-                <button type="button" class="size-choice selected" onclick="selectSize(this)">M</button>
-                <button type="button" class="size-choice" onclick="selectSize(this)">L</button>
-                <button type="button" class="size-choice" onclick="selectSize(this)">XL</button>
+        <div class="nav-container">
+            <nav class="nav-links" style="display: flex; align-items: center;">
+                <a href="index.html">Home</a>
+                <a href="collection.html" style="color: var(--text-main); font-weight: 700;">Collection</a>
+            </nav>
+
+            <div class="nav-actions">
+                <a href="login.html" class="cart-btn" style="text-decoration: none; font-size: 13px; letter-spacing: 1px; padding: 10px 22px;">SIGN IN</a>
             </div>
-            <button class="full-btn" onclick="confirmAddToBag()">Add to Bag — <span id="modalPrice">$0</span></button>
         </div>
-    </div>
+    </header>
 
-    <script>
-        const SUPABASE_URL = 'https://'uilzexhyrpzrwhitthow.supabase.co';   
-        const SUPABASE_ANON_KEY = 'sb_publishable_dqsyUaS0Ba58WDCRSNz1dA_MpRUMHT1';  
-        const supabaseClient = (window.supabase && SUPABASE_URL !== 'https://YOUR_SUPABASE_PROJECT_ID.supabase.co')
-            ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-            : null;
+    <!-- Collection Showcase -->
+    <main style="max-width: 1200px; margin: 3rem auto; padding: 0 2rem;">
+        <div style="text-align: center; margin-bottom: 3rem;">
+            <span class="tagline">PRECISION TAILORED</span>
+            <h1 style="font-family: var(--font-heading); font-size: 2.8rem; margin-top: 0.5rem;">The Curated Collection</h1>
+            <p style="color: var(--text-muted); margin-top: 0.5rem;">Select any garment to test your custom fit instantly in our 3D visualizer.</p>
+        </div>
 
-        const defaultItems = [ 
-            { 
-                id: "FF-DEFAULT-1",
-                name: "Green FF suit",
-                pieces:["480gsm French terry hoodie", "Matching heavyweight sweatpants", "Embroidered FF chest crest"],
-                fitProfile: "Relaxed / Boxy",
-                category: "Sweatsuits",
-                price: 100,
-                imageUrl: "",
-                gradient: "linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%)"
-            },
-            { 
-                id: "FF-DEFAULT-2",
-                name: "Pink FF suit",
-                pieces:["480gsm French terry hoodie", "Matching heavyweight sweatpants", "Embroidered FF chest crest"],
-                fitProfile: "Sculpted / Tapered",
-                category: "Sweatsuits",
-                price: 100,
-                imageUrl: "",
-                gradient: "linear-gradient(135deg, #d5b3c8 0%, #e8c5dc 100%)"
-            },
-            {
-                id: "FF-DEFAULT-3",
-                name: "Black FF suit",
-                pieces:["480gsm French terry hoodie", "Matching heavyweight sweatpants", "Embroidered FF chest crest"],
-                fitProfile: "Slouchy / Architectural",
-                category: "Sweatsuits",
-                price: 100,
-                imageUrl: "",
-                gradient: "linear-gradient(135deg, #1a1a1a 0%, #333333 100%)"
-            }
-        ];
+        <div class="product-grid">
+            <!-- Item 1 -->
+            <div class="product-card">
+                <div class="card-img-wrap"><div class="placeholder-img jacket-img"></div></div>
+                <div class="card-details">
+                    <h3>Architectural Wool Blazer</h3>
+                    <p class="price">$340</p>
+                </div>
+                <a href="visualizer.html?item=Architectural%20Wool%20Blazer" class="select-product-btn" style="text-align: center; text-decoration: none; display: block;">Try On Item</a>
+            </div>
+            <!-- Item 2 -->
+            <div class="product-card">
+                <div class="card-img-wrap"><div class="placeholder-img pants-img"></div></div>
+                <div class="card-details">
+                    <h3>Tapered Pleated Trousers</h3>
+                    <p class="price">$210</p>
+                </div>
+                <a href="visualizer.html?item=Tapered%20Pleated%20Trousers" class="select-product-btn" style="text-align: center; text-decoration: none; display: block;">Try On Item</a>
+            </div>
+            <!-- Item 3 -->
+            <div class="product-card">
+                <div class="card-img-wrap"><div class="placeholder-img dress-img"></div></div>
+                <div class="card-details">
+                    <h3>Minimalist Silk Slip Dress</h3>
+                    <p class="price">$290</p>
+                </div>
+                <a href="visualizer.html?item=Minimalist%20Silk%20Slip%20Dress" class="select-product-btn" style="text-align: center; text-decoration: none; display: block;">Try On Item</a>
+            </div>
+        </div>
+    </main>
 
-        let ffCollection = JSON.parse(localStorage.getItem('ff_collection_v4')) || defaultItems;
-        let currentFilter = 'All';
-        let cartCount = 0;
-        let selectedItem = null;
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <p>&copy; 2026 FF Precision Fit. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="collection.html">Collection</a>
+                <a href="visualizer.html">Visualizer</a>
+            </div>
+        </div>
+    </footer>
 
-        function saveCollection() {
-            localStorage.setItem('ff_collection_v4', JSON.stringify(ffCollection));
-        }
-
-        function renderFilters() {
-            const filterBar = document.getElementById('filterBar');
-            if (!filterBar) return;
-
-            const fixedCategories = ['All', 'Sweatsuits', 'Sweats', 'Sweaters'];
-            const extraCategories = [...new Set(ffCollection.map(item => item.category))]
-                .filter(cat => !fixedCategories.includes(cat));
-            const categories = [...fixedCategories, ...extraCategories];
-
-            filterBar.innerHTML = categories.map(cat => `
-                <button class="filter-btn ${currentFilter === cat ? 'active' : ''}" onclick="setFilter('${cat.replace(/'/g, "\\'")}')">
-                    ${cat === 'All' ? 'All Items' : cat}
-                </button>
-            `).join('');
-        }
-
-        function setFilter(category) {
-            currentFilter = category;
-            renderFilters();
-            renderCollection();
-        }
-
-        function renderCollection() {
-            const grid = document.getElementById('collectionGrid');
-            if (!grid) return;
-
-            const filteredItems = currentFilter === 'All'
-                ? ffCollection
-                : ffCollection.filter(item => item.category === currentFilter);
-
-            if (filteredItems.length === 0) {
-                grid.innerHTML = `<p style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 40px;">No clothing items in this category yet. Click "+ Add Clothing Item" to add one.</p>`;
-                return;
-            }
-
-            grid.innerHTML = filteredItems.map(item => {
-                const backgroundStyle = item.imageUrl
-                    ? `background-image: url('${item.imageUrl}');`
-                    : `background: ${item.gradient || 'linear-gradient(135deg, #333 0%, #666 100%)'};`;
-
-                return `
-                    <article class="product-card">
-                        <div class="card-visual" style="${backgroundStyle}">
-                            <button class="delete-item-btn" title="Remove item" onclick="deleteItem('${item.id || item.name}')">&times;</button>
-                            <span class="category-badge">${item.category}</span>
-                        </div>
-                        <div class="card-body">
-                            <div class="fit-tag">${item.fitProfile || 'Standard Fit'}</div>
-                            <h2 class="card-title">${item.name}</h2>
-                            <ul class="pieces-list">
-                                ${(item.pieces || []).map(piece => `<li>${piece}</li>`).join('')}
-                            </ul>
-                            <div class="card-footer">
-                                <span class="price">$${Number(item.price).toFixed(2)}</span>
-                                <button class="fit-btn" onclick="openFitModal('${item.id || item.name}')">Select Size</button>
-                            </div>
-                        </div>
-                    </article>
-                `;
-            }).join('');
-        }
-
-        function openAddModal() {
-            document.getElementById('addModal').style.display = 'flex';
-        }
-
-        function closeAddModal() {
-            document.getElementById('addModal').style.display = 'none';
-            document.getElementById('addItemForm').reset();
-        }
-
-        function handleAddItem(event) {
-            event.preventDefault();
-
-            const name = document.getElementById('itemName').value.trim();
-            const category = document.getElementById('itemCategory').value.trim();
-            const price = parseFloat(document.getElementById('itemPrice').value);
-            const fitProfile = document.getElementById('itemFit').value.trim() || 'Signature Fit';
-            const rawDetails = document.getElementById('itemDetails').value.trim();
-            const pieces = rawDetails ? rawDetails.split(',').map(s => s.trim()).filter(Boolean) : ['FF Exclusive Piece'];
-            const urlInput = document.getElementById('itemImageUrl').value.trim();
-            const fileInput = document.getElementById('itemImageFile').files[0];
-
-            const finalizeNewItem = (imageSrc) => {
-                const newItem = {
-                    id: 'FF-' + Date.now(), 
-                    name,
-                    pieces,
-                    fitProfile,
-                    category,
-                    price,
-                    imageUrl: imageSrc,
-                    gradient: 'linear-gradient(135deg, #1f1f1f 0%, #4d4d4d 100%)'
-                };
-
-                ffCollection.unshift(newItem);
-                saveCollection();
-                currentFilter = 'All';
-                renderFilters();
-                renderCollection();
-                closeAddModal();
-            };
-
-            if (fileInput) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    finalizeNewItem(e.target.result);
-                };
-                reader.readAsDataURL(fileInput);
-            } else {
-                finalizeNewItem(urlInput);
-            }
-        }
-
-        function deleteItem(identifier) {
-            ffCollection = ffCollection.filter(item => (item.id || item.name) !== identifier);
-            saveCollection();
-            renderFilters();
-            renderCollection();
-        }
-
-        function openFitModal(identifier) {
-            selectedItem = ffCollection.find(i => (i.id || i.name) === identifier);
-            if (!selectedItem) return;
-
-            document.getElementById('modalCategory').textContent = selectedItem.category;
-            document.getElementById('modalTitle').textContent = selectedItem.name;
-            document.getElementById('modalSpecs').textContent = selectedItem.fitProfile;
-            document.getElementById('modalPrice').textContent = `$${Number(selectedItem.price).toFixed(2)}`;
-            document.getElementById('fitModal').style.display = 'flex';
-        }
-
-        function closeFitModal() {
-            document.getElementById('fitModal').style.display = 'none';
-        }
-
-        function selectSize(btn) {
-            document.querySelectorAll('.size-choice').forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
-        }
-
-        function confirmAddToBag() {
-            cartCount++;
-            document.getElementById('cartCount').textContent = cartCount;
-            closeFitModal();
-        }
-
-        async function loadUserProfileData() {
-            let userName = 'Guest';
-            let userIdentifier = null;
-
-            if (supabaseClient) {
-                const { data: { user } } = await supabaseClient.auth.getUser();
-                if (user) {
-                    userIdentifier = user.email || user.phone;
-                    userName = user.user_metadata?.full_name || userIdentifier.split('@')[0];
-                }
-            }
-
-            if (!userIdentifier) {
-                const localSession = JSON.parse(localStorage.getItem('auraUserSession') || 'null');
-                if (localSession && localSession.user) {
-                    userIdentifier = localSession.user;
-                    userName = localSession.name || userIdentifier.split('@')[0];
-                }
-            }
-
-            const formattedName = userName.charAt(0).toUpperCase() + userName.slice(1);
-            document.getElementById('profileWelcomeHeader').textContent = `Welcome, ${formattedName}`;
-            document.getElementById('profileEmailSubtext').textContent = userIdentifier 
-                ? `Signed in as ${userIdentifier}` 
-                : 'Sign in to sync your sizing history across devices.';
-
-            let savedData = JSON.parse(localStorage.getItem('ff_saved_sizing') || 'null');
-
-            if (supabaseClient && userIdentifier) {
-                const { data, error } = await supabaseClient
-                    .from('user_profiles')
-                    .select('*')
-                    .eq('identifier', userIdentifier)
-                    .single();
-
-                if (data && !error) {
-                    savedData = {
-                        recommended_size: data.recommended_size || 'M',
-                        height: data.height || 175,
-                        weight: data.weight || 70,
-                        chest: data.chest || 96,
-                        waist: data.waist || 80,
-                        hips: data.hips || 98,
-                        inseam: data.inseam || 81,
-                        last_item: data.last_item || 'Green FF suit'
-                    };
-                }
-            }
-
-            if (savedData) {
-                document.getElementById('savedSizeDisplay').textContent = savedData.recommended_size || 'M';
-                document.getElementById('savedHeightDisplay').textContent = `${savedData.height || 175} cm`;
-                document.getElementById('savedWeightDisplay').textContent = `${savedData.weight || 70} kg`;
-                document.getElementById('savedChestDisplay').textContent = `${savedData.chest || 96} cm`;
-                document.getElementById('savedWaistDisplay').textContent = `${savedData.waist || 80} cm`;
-                document.getElementById('savedHipsDisplay').textContent = `${savedData.hips || 98} cm`;
-                document.getElementById('savedInseamDisplay').textContent = `${savedData.inseam || 81} cm`;
-                
-                document.getElementById('savedHistoryList').innerHTML = `
-                    <p><strong>Last Fitted Item:</strong> ${savedData.last_item || 'Custom Look'} — Size <strong>${savedData.recommended_size}</strong></p>
-                `;
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const hamburgerBtn = document.getElementById('hamburgerBtn');
-            const sideDrawer = document.getElementById('sideDrawer');
-            const navOverlay = document.getElementById('navOverlay');
-            const closeDrawerBtn = document.getElementById('closeDrawerBtn');
-            const openProfileBtn = document.getElementById('openProfileBtn');
-            const profileModal = document.getElementById('profileModal');
-            const closeProfileBtn = document.getElementById('closeProfileBtn');
-
-            function openDrawer() {
-                sideDrawer?.classList.add('open');
-                navOverlay?.classList.add('active');
-            }
-
-            function closeDrawer() {
-                sideDrawer?.classList.remove('open');
-                navOverlay?.classList.remove('active');
-            }
-
-            hamburgerBtn?.addEventListener('click', openDrawer);
-            closeDrawerBtn?.addEventListener('click', closeDrawer);
-            navOverlay?.addEventListener('click', closeDrawer);
-
-            openProfileBtn?.addEventListener('click', async () => {
-                closeDrawer();
-                await loadUserProfileData();
-                profileModal.style.display = 'flex';
-            });
-
-            closeProfileBtn?.addEventListener('click', () => {
-                profileModal.style.display = 'none';
-            });
-
-            document.getElementById('logoutBtn')?.addEventListener('click', async () => {
-                if (supabaseClient) await supabaseClient.auth.signOut();
-                localStorage.removeItem('auraUserSession');
-                profileModal.style.display = 'none';
-                window.location.reload();
-            });
-
-            renderFilters();
-            renderCollection();
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
-</html>
+</html>  
