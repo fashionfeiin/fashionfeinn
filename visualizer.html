@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FF | 3D Precision Fit Visualizer</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+    <!-- Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --bg-primary: #FAFAFA;
@@ -13,6 +15,7 @@
             --text-muted: #64748B;
             --accent: #1A1A1A;
             --accent-hover: #333333;
+            --highlight: #D4AF37;
             --border-color: #E2E8F0;
             --radius-sm: 6px;
             --radius-md: 12px;
@@ -133,7 +136,7 @@
             transition: opacity 0.3s ease;
         }
 
-        .drawer-overlay.open {
+        .drawer-overlay.active {
             opacity: 1;
             visibility: visible;
         }
@@ -224,7 +227,7 @@
             padding: 20px;
         }
 
-        .profile-modal.open {
+        .profile-modal.active {
             display: flex;
         }
 
@@ -238,17 +241,26 @@
             position: relative;
         }
 
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
         .saved-data-card {
             background: #F8FAFC;
             border: 1px solid var(--border-color);
             border-radius: var(--radius-sm);
             padding: 16px;
+            margin-top: 12px;
         }
 
         .stats-row {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 10px;
+            margin-top: 12px;
         }
 
         .stat-box {
@@ -267,7 +279,8 @@
         }
 
         .stat-value {
-            font-size: 16px;
+            font-size: 15px;
+            font-weight: 700;
             color: var(--text-main);
         }
 
@@ -324,7 +337,7 @@
             transition: var(--transition-fast);
         }
 
-        .garment-pill.active {
+        .garment-pill.active, .garment-pill:hover {
             background: var(--text-main);
             color: #fff;
             border-color: var(--text-main);
@@ -403,6 +416,9 @@
             .studio-workspace {
                 grid-template-columns: 1fr;
             }
+            .nav-container {
+                padding: 16px 20px;
+            }
         }
 
         /* Mannequin Viewport & Realistic Sculpted SVG */
@@ -415,7 +431,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
-            min-height: 480px;
+            min-height: 500px;
             position: relative;
         }
 
@@ -429,7 +445,7 @@
         }
 
         .avatar-frame {
-            height: 330px;
+            height: 350px;
             width: 100%;
             display: flex;
             align-items: center;
@@ -438,10 +454,15 @@
         }
 
         #mannequin-svg {
-            height: 310px;
+            height: 320px;
             width: auto;
             transition: transform 0.15s ease-out;
             filter: drop-shadow(0 12px 18px rgba(0,0,0,0.08));
+        }
+
+        #avatar-torso, #avatar-waist, #avatar-hips {
+            transform-origin: center;
+            transition: transform 0.15s ease-out;
         }
 
         .fit-verdict-badge {
@@ -483,11 +504,11 @@
         }
 
         .control-section-title {
-            font-size: 14px;
+            font-size: 12px;
             text-transform: uppercase;
             letter-spacing: 1px;
             color: var(--text-muted);
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             font-weight: 700;
         }
 
@@ -500,6 +521,599 @@
         }
 
         .tone-swatch {
-            width: 32px;
-            height: 32px;
-            border
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: transform 0.15s ease, border-color 0.15s ease;
+        }
+
+        .tone-swatch.active {
+            border-color: var(--text-main);
+            transform: scale(1.12);
+        }
+
+        /* Measurement Sliders */
+        .sliders-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .control-group label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            accent-color: var(--text-main);
+            cursor: pointer;
+        }
+
+        /* Size Selector Buttons */
+        .size-btn-group {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .size-btn {
+            padding: 10px 0;
+            border: 1px solid var(--border-color);
+            background: #fff;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .size-btn.active, .size-btn:hover {
+            background: var(--text-main);
+            color: #fff;
+            border-color: var(--text-main);
+        }
+
+        .add-cart-action-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--text-main);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: background var(--transition-fast);
+        }
+
+        .add-cart-action-btn:hover {
+            background: var(--accent-hover);
+        }
+
+        .toast-banner {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #1A1A1A;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            opacity: 0;
+            transform: translateY(15px);
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 400;
+        }
+
+        .toast-banner.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="nav-container">
+            <div class="nav-left">
+                <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <a href="index.html" class="brand-logo">FF</a>
+            </div>
+            <div class="nav-actions">
+                <button class="cart-trigger-btn" id="cartTriggerBtn">Bag (<span id="cartCount">0</span>)</button>
+                <a href="index.html" class="btn-primary">Back to Store</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- SLIDE-OUT DRAWER -->
+    <div class="drawer-overlay" id="navOverlay"></div>
+    <aside class="side-drawer" id="sideDrawer">
+        <div class="drawer-header">
+            <span class="brand-logo" style="font-size: 20px;">FF</span>
+            <button class="close-btn" id="closeDrawerBtn">&times;</button>
+        </div>
+        <nav class="drawer-links">
+            <button class="profile-menu-btn" id="openProfileBtn">My Saved Fit Profile</button>
+            <a href="index.html">Collection</a>
+            <a href="visualizer.html">3D Fit Visualizer</a>
+            <a href="#privacy">Privacy & Biometrics</a>
+        </nav>
+    </aside>
+
+    <!-- USER PROFILE MODAL -->
+    <div class="profile-modal" id="profileModal">
+        <div class="profile-modal-content">
+            <div class="modal-header">
+                <h3 style="font-family: 'Playfair Display', serif; font-size: 22px;">Saved Fit Profile</h3>
+                <button class="close-btn" id="closeProfileBtn">&times;</button>
+            </div>
+            <p class="subtext">Your anthropometric measurements and recommended sizes sync automatically when cloud sync is enabled.</p>
+            <div class="saved-data-card">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:13px; font-weight:600;" id="profileGarmentLabel">Architectural Wool Blazer</span>
+                    <span style="background:#1A1A1A; color:#fff; padding:2px 8px; border-radius:4px; font-size:12px; font-weight:700;">Size <span id="profileRecSize">M</span></span>
+                </div>
+                <div class="stats-row">
+                    <div class="stat-box">
+                        <span class="stat-label">Height</span>
+                        <span class="stat-value"><span id="profileHeight">175</span> cm</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Chest</span>
+                        <span class="stat-value"><span id="profileChest">96</span> cm</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Waist</span>
+                        <span class="stat-value"><span id="profileWaist">80</span> cm</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Hips</span>
+                        <span class="stat-value"><span id="profileHips">98</span> cm</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Inseam</span>
+                        <span class="stat-value"><span id="profileInseam">81</span> cm</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Weight</span>
+                        <span class="stat-value"><span id="profileWeight">70</span> kg</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN VISUALIZER STUDIO -->
+    <main class="visualizer-wrapper">
+        <div class="studio-container">
+            <div class="studio-header">
+                <div>
+                    <h1 id="activeItemTitle">Architectural Wool Blazer</h1>
+                    <p class="subtext">Real-time anthropometric drape simulation &amp; precision size engine</p>
+                </div>
+                <div class="garment-selector" id="garmentSelector">
+                    <button class="garment-pill active" data-garment="Architectural Wool Blazer" data-color="#2C3E50">Wool Blazer</button>
+                    <button class="garment-pill" data-garment="Tailored Pleated Trousers" data-color="#4A5568">Pleated Trousers</button>
+                    <button class="garment-pill" data-garment="Silk Column Slip Dress" data-color="#8B5E3C">Silk Slip Dress</button>
+                </div>
+            </div>
+
+            <!-- PRIVACY & CLOUD SYNC TOGGLE -->
+            <div class="data-privacy-card" id="privacy">
+                <div>
+                    <strong style="font-size: 14px; display: block;">Zero-Retention Local Mode &amp; Profile Sync</strong>
+                    <span class="subtext">Toggle on to sync your calibrated measurements with your FF Fit Profile.</span>
+                </div>
+                <div class="privacy-toggle-group">
+                    <span style="font-size: 12px; font-weight: 600;" id="syncStatusLabel">Sync Active</span>
+                    <label class="switch">
+                        <input type="checkbox" id="syncToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- WORKSPACE: LEFT VIEWPORT + RIGHT CONTROLS -->
+            <div class="studio-workspace">
+                <!-- LEFT: SCULPTED 3D-SHADED MANNEQUIN VIEWPORT -->
+                <div class="mannequin-viewport">
+                    <div class="viewport-badges">
+                        <span>FRONT ELEVATION // 1:1 SCALE</span>
+                        <span id="garmentDrapeBadge">DRAPE: TAILORED</span>
+                    </div>
+
+                    <div class="avatar-frame">
+                        <svg id="mannequin-svg" viewBox="0 0 240 460" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <radialGradient id="skinGrad" cx="40%" cy="35%" r="65%">
+                                    <stop offset="0%" id="skinHighlight" stop-color="#F3D2B3"/>
+                                    <stop offset="100%" id="skinShadow" stop-color="#C89D7C"/>
+                                </radialGradient>
+                                <linearGradient id="garmentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" id="garmentLight" stop-color="#3E546B"/>
+                                    <stop offset="100%" id="garmentDark" stop-color="#1E2B38"/>
+                                </linearGradient>
+                            </defs>
+
+                            <!-- Head & Neck -->
+                            <ellipse cx="120" cy="42" rx="20" ry="25" fill="url(#skinGrad)"/>
+                            <rect x="111" y="64" width="18" height="18" rx="6" fill="url(#skinGrad)"/>
+
+                            <!-- Arms -->
+                            <path d="M74,92 C58,135 54,185 52,235 L66,237 C70,190 75,145 84,105 Z" fill="url(#skinGrad)"/>
+                            <path d="M166,92 C182,135 186,185 188,235 L174,237 C170,190 165,145 156,105 Z" fill="url(#skinGrad)"/>
+
+                            <!-- Legs -->
+                            <g id="avatar-legs">
+                                <path d="M88,245 L82,425 L104,425 L114,255 Z" fill="url(#skinGrad)"/>
+                                <path d="M152,245 L158,425 L136,425 L126,255 Z" fill="url(#skinGrad)"/>
+                            </g>
+
+                            <!-- Torso / Chest -->
+                            <g id="avatar-torso">
+                                <path d="M74,86 C88,78 152,78 166,86 L156,162 L84,162 Z" fill="url(#garmentGrad)"/>
+                            </g>
+
+                            <!-- Waist -->
+                            <g id="avatar-waist">
+                                <path d="M84,160 L156,160 L152,205 L88,205 Z" fill="url(#garmentGrad)"/>
+                            </g>
+
+                            <!-- Hips / Lower Garment -->
+                            <g id="avatar-hips">
+                                <path d="M88,203 L152,203 L160,260 L80,260 Z" fill="url(#garmentGrad)"/>
+                            </g>
+                        </svg>
+                    </div>
+
+                    <div class="fit-verdict-badge">
+                        <div class="recommended-size-tag">Precision Fit Verdict: <strong id="recommended-size">M</strong></div>
+                        <div class="latency-indicator">● Real-time tension &amp; drape calibrated (&lt;12ms)</div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: CONTROLS PANEL -->
+                <div class="controls-panel">
+                    <div>
+                        <div class="control-section-title">1. Mannequin Tone</div>
+                        <div class="skin-tone-picker" id="skinTonePicker">
+                            <button class="tone-swatch active" style="background:#F3D2B3;" data-light="#F3D2B3" data-dark="#C89D7C" aria-label="Fair tone"></button>
+                            <button class="tone-swatch" style="background:#E0AC69;" data-light="#E0AC69" data-dark="#B68042" aria-label="Warm olive tone"></button>
+                            <button class="tone-swatch" style="background:#C68642;" data-light="#C68642" data-dark="#965D24" aria-label="Medium tan tone"></button>
+                            <button class="tone-swatch" style="background:#8D5524;" data-light="#8D5524" data-dark="#5E3512" aria-label="Deep bronze tone"></button>
+                            <button class="tone-swatch" style="background:#4B2E1E;" data-light="#4B2E1E" data-dark="#2B180E" aria-label="Rich espresso tone"></button>
+                        </div>
+
+                        <div class="control-section-title">2. Body Measurements</div>
+                        <div class="sliders-grid">
+                            <div class="control-group">
+                                <label>Height <span><span id="height-val">175</span> cm</span></label>
+                                <input type="range" id="height-input" min="150" max="200" value="175">
+                            </div>
+                            <div class="control-group">
+                                <label>Weight <span><span id="weight-val">70</span> kg</span></label>
+                                <input type="range" id="weight-input" min="45" max="120" value="70">
+                            </div>
+                            <div class="control-group">
+                                <label>Chest <span><span id="chest-val">96</span> cm</span></label>
+                                <input type="range" id="chest-input" min="76" max="126" value="96">
+                            </div>
+                            <div class="control-group">
+                                <label>Waist <span><span id="waist-val">80</span> cm</span></label>
+                                <input type="range" id="waist-input" min="60" max="115" value="80">
+                            </div>
+                            <div class="control-group">
+                                <label>Hips <span><span id="hips-val">98</span> cm</span></label>
+                                <input type="range" id="hips-input" min="80" max="130" value="98">
+                            </div>
+                            <div class="control-group">
+                                <label>Inseam <span><span id="inseam-val">81</span> cm</span></label>
+                                <input type="range" id="inseam-input" min="68" max="95" value="81">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="control-section-title">3. Select Size</div>
+                        <div class="size-btn-group" id="sizeBtnGroup">
+                            <button class="size-btn" data-size="XS">XS</button>
+                            <button class="size-btn" data-size="S">S</button>
+                            <button class="size-btn active" data-size="M">M</button>
+                            <button class="size-btn" data-size="L">L</button>
+                            <button class="size-btn" data-size="XL">XL</button>
+                        </div>
+
+                        <button class="add-cart-action-btn" id="addToBagBtn" style="margin-top: 16px;">Add Recommended Fit to Bag</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="toast-banner" id="toastBanner"></div>
+
+    <script>
+        // ==========================================
+        // 1. SUPABASE CONFIGURATION & INITIALIZATION
+        // ==========================================
+        const SUPABASE_URL = 'https://uilzexhyrpzrwhitthow.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_dqsyUaS0Ba58WDCRSNz1dA_MpRUMHT1';
+        const supabaseClient = (window.supabase && SUPABASE_URL !== 'https://YOUR_SUPABASE_PROJECT_ID.supabase.co')
+            ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+            : null;
+
+        let selectedSize = 'M';
+        let bagCount = 0;
+
+        // ==========================================
+        // 2. DOM INITIALIZATION & EVENT LISTENERS
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            initNavigation();
+            initStudioControls();
+            loadUserProfileData();
+            updateAvatar();
+        });
+
+        function initNavigation() {
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            const sideDrawer = document.getElementById('sideDrawer');
+            const navOverlay = document.getElementById('navOverlay');
+            const closeDrawerBtn = document.getElementById('closeDrawerBtn');
+            const openProfileBtn = document.getElementById('openProfileBtn');
+            const profileModal = document.getElementById('profileModal');
+            const closeProfileBtn = document.getElementById('closeProfileBtn');
+
+            function openDrawer() {
+                sideDrawer?.classList.add('open');
+                navOverlay?.classList.add('active');
+            }
+
+            function closeDrawer() {
+                sideDrawer?.classList.remove('open');
+                navOverlay?.classList.remove('active');
+            }
+
+            hamburgerBtn?.addEventListener('click', openDrawer);
+            closeDrawerBtn?.addEventListener('click', closeDrawer);
+            navOverlay?.addEventListener('click', closeDrawer);
+
+            openProfileBtn?.addEventListener('click', async () => {
+                closeDrawer();
+                await loadUserProfileData();
+                profileModal?.classList.add('active');
+            });
+
+            closeProfileBtn?.addEventListener('click', () => {
+                profileModal?.classList.remove('active');
+            });
+
+            profileModal?.addEventListener('click', (e) => {
+                if (e.target === profileModal) {
+                    profileModal.classList.remove('active');
+                }
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeDrawer();
+                    profileModal?.classList.remove('active');
+                }
+            });
+        }
+
+        function initStudioControls() {
+            // Sliders
+            const inputIds = ['height-input', 'weight-input', 'chest-input', 'waist-input', 'hips-input', 'inseam-input'];
+            inputIds.forEach(id => {
+                document.getElementById(id)?.addEventListener('input', updateAvatar);
+            });
+
+            // Garment Selector Pills
+            document.querySelectorAll('.garment-pill').forEach(pill => {
+                pill.addEventListener('click', () => {
+                    document.querySelectorAll('.garment-pill').forEach(p => p.classList.remove('active'));
+                    pill.classList.add('active');
+
+                    const title = pill.dataset.garment;
+                    const color = pill.dataset.color;
+                    document.getElementById('activeItemTitle').textContent = title;
+                    document.getElementById('garmentLight').setAttribute('stop-color', color);
+                    document.getElementById('garmentDark').setAttribute('stop-color', shadeColor(color, -35));
+                    updateAvatar();
+                });
+            });
+
+            // Skin Tone Swatches
+            document.querySelectorAll('.tone-swatch').forEach(swatch => {
+                swatch.addEventListener('click', () => {
+                    document.querySelectorAll('.tone-swatch').forEach(s => s.classList.remove('active'));
+                    swatch.classList.add('active');
+                    document.getElementById('skinHighlight').setAttribute('stop-color', swatch.dataset.light);
+                    document.getElementById('skinShadow').setAttribute('stop-color', swatch.dataset.dark);
+                });
+            });
+
+            // Size Buttons
+            document.querySelectorAll('.size-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    selectedSize = btn.dataset.size;
+                });
+            });
+
+            // Sync Toggle
+            const syncToggle = document.getElementById('syncToggle');
+            const syncStatusLabel = document.getElementById('syncStatusLabel');
+            syncToggle?.addEventListener('change', () => {
+                syncStatusLabel.textContent = syncToggle.checked ? 'Sync Active' : 'Local Only';
+            });
+
+            // Add to Bag Button
+            document.getElementById('addToBagBtn')?.addEventListener('click', () => {
+                bagCount++;
+                document.getElementById('cartCount').textContent = bagCount;
+                const item = document.getElementById('activeItemTitle').textContent;
+                showToast(`Added ${item} (Size ${selectedSize}) to your bag.`);
+            });
+        }
+
+        // ==========================================
+        // 3. INTERACTIVE MANNEQUIN SCALING & SIZING
+        // ==========================================
+        function updateAvatar() {
+            const height = parseFloat(document.getElementById('height-input')?.value || 175);
+            const weight = parseFloat(document.getElementById('weight-input')?.value || 70);
+            const chest = parseFloat(document.getElementById('chest-input')?.value || 96);
+            const waist = parseFloat(document.getElementById('waist-input')?.value || 80);
+            const hips = parseFloat(document.getElementById('hips-input')?.value || 98);
+            const inseam = parseFloat(document.getElementById('inseam-input')?.value || 81);
+
+            setVal('height-val', height);
+            setVal('weight-val', weight);
+            setVal('chest-val', chest);
+            setVal('waist-val', waist);
+            setVal('hips-val', hips);
+            setVal('inseam-val', inseam);
+
+            const torso = document.getElementById('avatar-torso');
+            const waistPart = document.getElementById('avatar-waist');
+            const hipsPart = document.getElementById('avatar-hips');
+            const legsPart = document.getElementById('avatar-legs');
+
+            if (torso && waistPart) {
+                const heightScale = height / 175;
+                const chestScale = chest / 96;
+                const waistScale = waist / 80;
+                const hipsScale = hips / 98;
+                const inseamScale = inseam / 81;
+
+                torso.style.transform = `scaleY(${heightScale}) scaleX(${chestScale})`;
+                waistPart.style.transform = `scaleX(${waistScale})`;
+                if (hipsPart) hipsPart.style.transform = `scaleX(${hipsScale})`;
+                if (legsPart) legsPart.style.transform = `scaleY(${inseamScale})`;
+            }
+
+            const recommendedSize = computeRecommendedSize(chest, waist, hips);
+            const recSizeEl = document.getElementById('recommended-size');
+            if (recSizeEl) recSizeEl.textContent = recommendedSize;
+
+            // Highlight matching size button automatically
+            document.querySelectorAll('.size-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.size === recommendedSize);
+            });
+            selectedSize = recommendedSize;
+
+            const activeItem = document.getElementById('activeItemTitle')?.textContent || 'Architectural Wool Blazer';
+            saveSizeRecommendationToProfile(height, weight, chest, waist, hips, inseam, recommendedSize, activeItem);
+        }
+
+        function setVal(id, value) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = value;
+        }
+
+        function computeRecommendedSize(chest, waist, hips) {
+            if (chest <= 86 && waist <= 70 && hips <= 90) return 'XS';
+            if (chest <= 92 && waist <= 76 && hips <= 95) return 'S';
+            if (chest <= 100 && waist <= 84 && hips <= 102) return 'M';
+            if (chest <= 108 && waist <= 94 && hips <= 110) return 'L';
+            return 'XL';
+        }
+
+        // ==========================================
+        // 4. PROFILE PERSISTENCE (LOCAL + SUPABASE)
+        // ==========================================
+        async function saveSizeRecommendationToProfile(height, weight, chest, waist, hips, inseam, recommendedSize, garment) {
+            const profileData = { height, weight, chest, waist, hips, inseam, recommendedSize, garment, updatedAt: new Date().toISOString() };
+            
+            // Update modal UI immediately
+            setVal('profileHeight', height);
+            setVal('profileWeight', weight);
+            setVal('profileChest', chest);
+            setVal('profileWaist', waist);
+            setVal('profileHips', hips);
+            setVal('profileInseam', inseam);
+            setVal('profileRecSize', recommendedSize);
+            setVal('profileGarmentLabel', garment);
+
+            const syncEnabled = document.getElementById('syncToggle')?.checked;
+            if (!syncEnabled) return;
+
+            localStorage.setItem('ff_fit_profile', JSON.stringify(profileData));
+
+            if (supabaseClient) {
+                try {
+                    const { data: { user } } = await supabaseClient.auth.getUser();
+                    if (user) {
+                        await supabaseClient.from('fit_profiles').upsert({
+                            user_id: user.id,
+                            height,
+                            weight,
+                            chest,
+                            waist,
+                            hips,
+                            inseam,
+                            recommended_size: recommendedSize,
+                            garment
+                        });
+                    }
+                } catch (err) {
+                    console.warn('Supabase sync skipped:', err.message);
+                }
+            }
+        }
+
+        async function loadUserProfileData() {
+            const saved = localStorage.getItem('ff_fit_profile');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    if (data.height) document.getElementById('height-input').value = data.height;
+                    if (data.weight) document.getElementById('weight-input').value = data.weight;
+                    if (data.chest) document.getElementById('chest-input').value = data.chest;
+                    if (data.waist) document.getElementById('waist-input').value = data.waist;
+                    if (data.hips) document.getElementById('hips-input').value = data.hips;
+                    if (data.inseam) document.getElementById('inseam-input').value = data.inseam;
+                } catch (e) {
+                    console.warn('Could not parse saved fit profile.');
+                }
+            }
+        }
+
+        function shadeColor(hex, percent) {
+            const num = parseInt(hex.replace('#', ''), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = Math.max(0, Math.min(255, (num >> 16) + amt));
+            const G = Math.max(0, Math.min(255, ((num >> 8) & 0x00FF) + amt));
+            const B = Math.max(0, Math.min(255, (num & 0x0000FF) + amt));
+            return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toastBanner');
+            if (!toast) return;
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2800);
+        }
+    </script>
+</body>
+</html>
