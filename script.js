@@ -1,183 +1,234 @@
-/**
- * FF Fashion Sizing & Mannequin Engine with Supabase Integration
- */
-
-
 // ==========================================
 // 1. SUPABASE CONFIGURATION & INITIALIZATION
 // ==========================================
-// Replace these placeholders with your actual Supabase project URL and anon/public key
-const SUPABASE_URL = 'sb_publishable_dqsyUaS0Ba58WDCRSNz1dA_MpRUMHT1';  
-const SUPABASE_ANON_KEY = 'sb_publishable_dqsyUaS0Ba58WDCRSNz1dA_MpRUMHT1';       
+// Replace these placeholder strings with your actual Supabase URL and Anon Key from Project Settings > API
+const SUPABASE_URL = 'https://sb_publishable_dqsyUaS0Ba58WDCRSNz1dA_MpRUMHT1';  
+const SUPABASE_ANON_KEY = 'https://uilzexhyrpzrwhitthow.supabase.co';  
 
+const supabaseClient = (window.supabase && SUPABASE_URL !== 'https://YOUR_SUPABASE_PROJECT_ID.supabase.co') 
+    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)  
+    : null;
 
-let supabaseClient = null;
-
-// Initialize Supabase if SDK is loaded
-if (window.supabase && SUPABASE_URL !== 'https://YOUR_SUPABASE_PROJECT_ID.supabase.co') {
-    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    let selectedProduct = "Architectural Wool Blazer";
-let currentContactMode = "phone"; // 'phone' or 'email'
-let isCustomDataAllowed = true;
-let cartCount = 0;
-
-// Dynamic Sizing Engine Math
-function calculateRecommendedSize(height, weight, chest, waist) {
-    // Sizing score heuristic for zero-latency local calculation
-    const score = (height * 0.2) + (weight * 0.4) + (chest * 0.25) + (waist * 0.15);
-    
-    if (score < 65) return "XS";
-    if (score >= 65 && score < 75) return "S";
-    if (score >= 75 && score < 87) return "M";
-    if (score >= 87 && score < 98) return "L";
-    if (score >= 98 && score < 110) return "XL";
-    return "XXL";
-}
-
-// Visual Avatar Dynamic Renderer
-function updateAvatar() {
-    if (!isCustomDataAllowed) return;
-
-    // Read Slider Inputs
-    const height = parseInt(document.getElementById('height-input').value);
-    const weight = parseInt(document.getElementById('weight-input').value);
-    const chest = parseInt(document.getElementById('chest-input').value);
-    const waist = parseInt(document.getElementById('waist-input').value);
-
-    // Update Value UI Labels
-    document.getElementById('height-val').textContent = height;
-    document.getElementById('weight-val').textContent = weight;
-    document.getElementById('chest-val').textContent = chest;
-    document.getElementById('waist-val').textContent = waist;
-
-    // Compute Mannequin Visual Scale
-    const scaleY = (height / 175).toFixed(2);
-    const chestWidth = Math.round((chest / 96) * 70);
-    const waistWidth = Math.round((waist / 80) * 60);
-
-    // Apply Real-time CSS Transformations
-    const mannequin = document.getElementById('ai-mannequin');
-    const torso = document.getElementById('avatar-torso');
-    const waistEl = document.getElementById('avatar-waist');
-
-    if (mannequin && torso && waistEl) {
-        mannequin.style.transform = `scaleY(${scaleY})`;
-        torso.style.width = `${chestWidth}px`;
-        waistEl.style.width = `${waistWidth}px`;
-    }
-
-    // Benchmark Latency for HCD Transparency
-    const t0 = performance.now();
-    const recommendedSize = calculateRecommendedSize(height, weight, chest, waist);
-    const t1 = performance.now();
-
-    // Update Size Recommendation Badge
-    document.getElementById('recommended-size').textContent = recommendedSize;
-    document.getElementById('fit-latency-note').textContent = `⚡ Size computed in ${(t1 - t0).toFixed(2)}ms (Local Zero-Latency Engine)`;
-}
-
-// Toggle Custom Data Privacy vs Standard Size Mode
-function toggleCustomDataMode() {
-    const toggle = document.getElementById('privacy-toggle');
-    isCustomDataAllowed = toggle.checked;
-
-    const customForm = document.getElementById('custom-measurement-form');
-    const standardPanel = document.getElementById('standard-sizing-panel');
-
-    if (isCustomDataAllowed) {
-        customForm.classList.remove('hidden');
-        standardPanel.classList.add('hidden');
-        updateAvatar();
-    } else {
-        customForm.classList.add('hidden');
-        standardPanel.classList.remove('hidden');
-        document.getElementById('recommended-size').textContent = "Standard Select";
-        document.getElementById('fit-latency-note').textContent = "🔒 Anonymous Mode Active (No Body Data Stored)";
-    }
-}
-
-// Select Product Handler
-function selectProduct(name, price) {
-    selectedProduct = name;
-    const verdictLabel = document.querySelector('#fit-verdict span strong');
-    if (verdictLabel) {
-        verdictLabel.textContent = name;
-    }
-    // Smooth Scroll to Studio
-    document.getElementById('studio').scrollIntoView({ behavior: 'smooth' });
-}
-
-// Select Standard Size Fallback
-function selectStandardSize(size) {
-    document.querySelectorAll('.size-btn').forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.textContent === size) btn.classList.add('active');
-    });
-    document.getElementById('recommended-size').textContent = size;
-}
-
-// Switch VIP Registration Contact Input Mode
-function switchContactMode(mode) {
-    currentContactMode = mode;
-    const input = document.getElementById('contact-input');
-    const btnPhone = document.getElementById('tab-phone');
-    const btnEmail = document.getElementById('tab-email');
-
-    if (mode === 'phone') {
-        btnPhone.classList.add('active');
-        btnEmail.classList.remove('active');
-        input.type = 'tel';
-        input.placeholder = 'Enter mobile phone (+1...)';
-    } else {
-        btnEmail.classList.add('active');
-        btnPhone.classList.remove('active');
-        input.type = 'email';
-        input.placeholder = 'Enter your Gmail address';
-    }
-}
-
-// VIP Signup Handler with Data Sanitization & Security Simulation
-function handleSignup(e) {
-    e.preventDefault();
-    const inputVal = document.getElementById('contact-input').value.trim();
-    const feedback = document.getElementById('form-feedback');
-
-    if (!inputVal) {
-        feedback.style.color = '#EF4444';
-        feedback.textContent = 'Please provide a valid contact method.';
-        return;
-    }
-
-    // Input Validation Logic
-    if (currentContactMode === 'phone' && !/^\+?[0-9\s\-()]{7,15}$/.test(inputVal)) {
-        feedback.style.color = '#EF4444';
-        feedback.textContent = 'Please enter a valid phone number with country code.';
-        return;
-    }
-
-    if (currentContactMode === 'email' && !/\S+@\S+\.\S+/.test(inputVal)) {
-        feedback.style.color = '#EF4444';
-        feedback.textContent = 'Please enter a valid email address.';
-        return;
-    }
-
-    // Success response
-    feedback.style.color = '#10B981';
-    feedback.textContent = `✓ Successfully subscribed! VIP sizing alerts will be sent to ${inputVal}.`;
-    document.getElementById('contact-input').value = '';
-}
-
-// Add to Cart Interaction
-function addToCart() {
-    cartCount++;
-    document.getElementById('cart-count').textContent = cartCount;
-    alert(`Added ${selectedProduct} (${document.getElementById('recommended-size').textContent}) to your cart!`);
-}
-
-// Initialize Visualizer on DOM Load
+// ==========================================
+// 2. DOM INITIALIZATION & EVENT LISTENERS
+// ==========================================
 document.addEventListener('DOMContentLoaded', () => {
-    updateAvatar();
+    initNavigation();
+    initMeasurementListeners();
+    loadUserProfileData(); // Load profile on page load
 });
 
+function initNavigation() {
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const sideDrawer = document.getElementById('sideDrawer');
+    const navOverlay = document.getElementById('navOverlay');
+    const closeDrawerBtn = document.getElementById('closeDrawerBtn');
+    const openProfileBtn = document.getElementById('openProfileBtn');
+    const profileModal = document.getElementById('profileModal');
+    const closeProfileBtn = document.getElementById('closeProfileBtn');
 
+    function openDrawer() {
+        sideDrawer?.classList.add('open');
+        navOverlay?.classList.add('active');
+    }
+
+    function closeDrawer() {
+        sideDrawer?.classList.remove('open');
+        navOverlay?.classList.remove('active');
+    }
+
+    hamburgerBtn?.addEventListener('click', openDrawer);
+    closeDrawerBtn?.addEventListener('click', closeDrawer);
+    navOverlay?.addEventListener('click', closeDrawer);
+
+    openProfileBtn?.addEventListener('click', async () => {
+        closeDrawer();
+        await loadUserProfileData();
+        profileModal?.classList.add('active');
+    });
+
+    closeProfileBtn?.addEventListener('click', () => {
+        profileModal?.classList.remove('active');
+    });
+}
+
+// Attach real-time listeners to all 6 sliders
+function initMeasurementListeners() {
+    const inputIds = ['height-input', 'weight-input', 'chest-input', 'waist-input', 'hips-input', 'inseam-input'];
+    
+    inputIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', updateAvatar);
+        }
+    });
+}
+
+// ==========================================
+// 3. INTERACTIVE MANNEQUIN SCALING & SIZING ENGINE
+// ==========================================
+function updateAvatar() {
+    // 1. Get current slider values
+    const height = parseFloat(document.getElementById('height-input')?.value || 175);
+    const weight = parseFloat(document.getElementById('weight-input')?.value || 70);
+    const chest = parseFloat(document.getElementById('chest-input')?.value || 96);
+    const waist = parseFloat(document.getElementById('waist-input')?.value || 80);
+    const hips = parseFloat(document.getElementById('hips-input')?.value || 98);
+    const inseam = parseFloat(document.getElementById('inseam-input')?.value || 81);
+
+    // 2. Update numerical text labels on the UI in real-time
+    setVal('height-val', height);
+    setVal('weight-val', weight);
+    setVal('chest-val', chest);
+    setVal('waist-val', waist);
+    setVal('hips-val', hips);
+    setVal('inseam-val', inseam);
+
+    // 3. Morph 3D/CSS Mannequin body parts dynamically
+    const torso = document.getElementById('avatar-torso');
+    const waistPart = document.getElementById('avatar-waist');
+    const hipsPart = document.getElementById('avatar-hips');
+
+    if (torso && waistPart) {
+        const heightScale = height / 175;
+        const chestScale = chest / 96;
+        const waistScale = waist / 80;
+        const hipsScale = hips / 98;
+
+        torso.style.transform = `scaleY(${heightScale}) scaleX(${chestScale})`;
+        waistPart.style.transform = `scaleX(${waistScale})`;
+        if (hipsPart) hipsPart.style.transform = `scaleX(${hipsScale})`;
+    }
+
+    // 4. Compute recommended clothing size
+    const recommendedSize = computeRecommendedSize(chest, waist, hips);
+    const recSizeEl = document.getElementById('recommended-size');
+    if (recSizeEl) recSizeEl.textContent = recommendedSize;
+
+    // 5. Automatically save changes to local storage & Supabase database
+    saveSizeRecommendationToProfile(height, weight, chest, waist, hips, inseam, recommendedSize);
+}
+
+function setVal(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+}
+
+function computeRecommendedSize(chest, waist, hips) {
+    let size = 'M';
+    if (chest < 90 && waist < 75) size = 'S';
+    else if (chest >= 102 || waist >= 90 || hips >= 106) size = 'L';
+    if (chest >= 110 || waist >= 100) size = 'XL';
+    return size;
+}
+
+// ==========================================
+// 4. LOAD & SAVE PROFILE DATA (LOCAL & SUPABASE)
+// ==========================================
+async function loadUserProfileData() {
+    let userName = 'Guest';
+    let userIdentifier = null;
+
+    // Check Supabase Auth session first
+    if (supabaseClient) {
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        if (user) {
+            userIdentifier = user.email || user.phone;
+            userName = user.user_metadata?.full_name || userIdentifier.split('@')[0];
+        }
+    }
+
+    // Fallback to local session if signed in locally
+    if (!userIdentifier) {
+        const localSession = JSON.parse(localStorage.getItem('auraUserSession') || 'null');
+        if (localSession && localSession.user) {
+            userIdentifier = localSession.user;
+            userName = localSession.name || userIdentifier.split('@')[0];
+        }
+    }
+
+    const formattedName = userName.charAt(0).toUpperCase() + userName.slice(1);
+    document.getElementById('profileWelcomeHeader').textContent = `Welcome, ${formattedName}`;
+    document.getElementById('profileEmailSubtext').textContent = userIdentifier 
+        ? `Signed in as ${userIdentifier}` 
+        : 'Sign in to sync your sizing history across devices.';
+
+    let savedData = JSON.parse(localStorage.getItem('ff_saved_sizing') || 'null');
+
+    // Fetch from Supabase if logged in
+    if (supabaseClient && userIdentifier) {
+        const { data, error } = await supabaseClient
+            .from('user_profiles')
+            .select('*')
+            .eq('identifier', userIdentifier)
+            .single();
+
+        if (data && !error) {
+            savedData = {
+                recommended_size: data.recommended_size || 'M',
+                height: data.height || 175,
+                weight: data.weight || 70,
+                chest: data.chest || 96,
+                waist: data.waist || 80,
+                hips: data.hips || 98,
+                inseam: data.inseam || 81,
+                last_item: data.last_item || 'Architectural Wool Blazer'
+            };
+        }
+    }
+
+    // Populate modal profile display elements
+    if (savedData) {
+        setVal('savedSizeDisplay', savedData.recommended_size);
+        setVal('savedHeightDisplay', `${savedData.height || 175} cm`);
+        setVal('savedWeightDisplay', `${savedData.weight || 70} kg`);
+        setVal('savedChestDisplay', `${savedData.chest || 96} cm`);
+        setVal('savedWaistDisplay', `${savedData.waist || 80} cm`);
+        setVal('savedHipsDisplay', `${savedData.hips || 98} cm`);
+        setVal('savedInseamDisplay', `${savedData.inseam || 81} cm`);
+        
+        const historyEl = document.getElementById('savedHistoryList');
+        if (historyEl) {
+            historyEl.innerHTML = `<p><strong>Last Fitted Item:</strong> ${savedData.last_item || 'Custom Look'} — Size <strong>${savedData.recommended_size}</strong></p>`;
+        }
+    }
+}
+
+async function saveSizeRecommendationToProfile(height, weight, chest, waist, hips, inseam, recommendedSize, itemName = 'Architectural Wool Blazer') {
+    const sizingRecord = { height, weight, chest, waist, hips, inseam, recommended_size: recommendedSize, last_item: itemName };
+    
+    // Save to browser storage
+    localStorage.setItem('ff_saved_sizing', JSON.stringify(sizingRecord));
+
+    // Sync to Supabase table if user is logged in
+    if (supabaseClient) {
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        const localSession = JSON.parse(localStorage.getItem('auraUserSession') || 'null');
+        const identifier = user?.email || localSession?.user;
+
+        if (identifier) {
+            await supabaseClient
+                .from('user_profiles')
+                .upsert({
+                    identifier: identifier,
+                    height: height,
+                    weight: weight,
+                    chest: chest,
+                    waist: waist,
+                    hips: hips,
+                    inseam: inseam,
+                    recommended_size: recommendedSize,
+                    last_item: itemName,
+                    updated_at: new Date()
+                }, { onConflict: 'identifier' });
+        }
+    }
+}
+
+// Sign Out Handler
+document.getElementById('logoutBtn')?.addEventListener('click', async () => {
+    if (supabaseClient) await supabaseClient.auth.signOut();
+    localStorage.removeItem('auraUserSession');
+    document.getElementById('profileModal')?.classList.remove('active');
+    window.location.reload();
+});
