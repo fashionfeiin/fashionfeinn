@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FF | Curated Collection Manager</title>
+    <!-- Supabase JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,400&display=swap" rel="stylesheet">
-    <style>   
+    <style>
         :root {
             --bg-primary: #faf9f6;
             --bg-card: #ffffff;
@@ -14,6 +16,9 @@
             --accent: #141414;
             --border-light: #e5e4e0;
             --danger: #b91c1c;
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --shadow-soft: 0 12px 35px rgba(0, 0, 0, 0.15);
         }
 
         * {
@@ -30,7 +35,7 @@
             scroll-behavior: smooth;
         }
 
-        /* Navigation */
+        /* Navigation & Header */
         header {
             background-color: var(--bg-card);
             border-bottom: 1px solid var(--border-light);
@@ -114,6 +119,98 @@
             color: #fff;
         }
 
+        /* Hamburger Drawer Styles */
+        .hamburger-btn {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 24px;
+            height: 18px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .hamburger-btn span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background-color: var(--text-main);
+        }
+
+        .drawer-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            display: none;
+            z-index: 998;
+        }
+
+        .drawer-overlay.active {
+            display: block;
+        }
+
+        .side-drawer {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 280px;
+            height: 100vh;
+            background: var(--bg-card);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            padding: 28px 24px;
+            transition: left 0.3s ease;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .side-drawer.open {
+            left: 0;
+        }
+
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 26px;
+            cursor: pointer;
+            color: var(--text-main);
+            line-height: 1;
+        }
+
+        .drawer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .drawer-links a {
+            text-decoration: none;
+            color: var(--text-main);
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .profile-menu-btn {
+            text-align: left;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            padding: 12px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-main);
+        }
+
         /* Hero Banner */
         .collection-hero {
             text-align: center;
@@ -124,14 +221,14 @@
 
         .collection-hero h1 {
             font-family: 'Playfair Display', serif;
-            font-size: 20px;
+            font-size: 36px;
             font-weight: 500;
             margin-bottom: 10px;
         }
 
         .collection-hero p {
             color: var(--text-muted);
-            font-size: 20px;
+            font-size: 18px;
         }
 
         /* Filter Bar */
@@ -143,8 +240,8 @@
             padding: 0 24px 36px;
             max-width: 1280px;
             margin: 0 auto;
-        }  
-        
+        }
+
         .filter-btn {
             background-color: var(--bg-card);
             border: 1px solid var(--border-light);
@@ -307,7 +404,7 @@
             cursor: pointer;
         }
 
-        /* Modals */
+        /* Modals & Profile Popup */
         .modal-backdrop {
             position: fixed;
             inset: 0;
@@ -324,10 +421,11 @@
             max-width: 480px;
             width: 100%;
             padding: 32px;
-            border-radius: 8px;
+            border-radius: var(--radius-md);
             position: relative;
             max-height: 90vh;
             overflow-y: auto;
+            box-shadow: var(--shadow-soft);
         }
 
         .close-modal {
@@ -345,6 +443,45 @@
             font-family: 'Playfair Display', serif;
             font-size: 24px;
             margin-bottom: 16px;
+        }
+
+        /* Expanded Measurements Grid */
+        .saved-data-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .stat-box {
+            background: #fff;
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-light);
+            text-align: center;
+        }
+
+        .stat-label {
+            display: block;
+            font-size: 10px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            color: var(--text-main);
+            font-weight: bold;
         }
 
         /* Form Styles */
@@ -407,59 +544,50 @@
             background: var(--text-main);
             color: #fff;
         }
-        <style> 
-        .full-btn {  
-            .full-btn {
+
+        .full-btn {
             width: 100%;
-            padding: 14px;
+            padding: 13px;
             background: var(--text-main);
             color: #fff;
             border: none;
             border-radius: 4px;
             font-weight: 600;
+            font-size: 14px;
             cursor: pointer;
         }
-
-        /* --- ADD YOUR NEW MEASUREMENTS GRID STYLES HERE --- */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .stat-box {
-            background: #fff;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid var(--border-light);
-            text-align: center;
-        }
-
-        .stat-label {
-            display: block;
-            font-size: 10px;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 2px;
-            letter-spacing: 0.5px;
-        }
-
-        .stat-value {
-            font-size: 16px;
-            color: var(--text-main);
-            font-weight: bold;
-        }  
     </style>
 </head>
 <body>
 
+    <!-- Left Slide-Out Hamburger Drawer -->
+    <div id="navOverlay" class="drawer-overlay"></div>
+    <aside id="sideDrawer" class="side-drawer">
+        <div class="drawer-header">
+            <span style="letter-spacing: 4px; font-weight: 600;">FF MENU</span>
+            <button id="closeDrawerBtn" class="close-btn">&times;</button>
+        </div>
+        <nav class="drawer-links">
+            <a href="index.html">Home</a>
+            <a href="collection.html">Collection</a>
+            <a href="visualizer.html">Try on Visualizer</a>
+            <hr style="border: 0; border-top: 1px solid var(--border-light); margin: 10px 0;">
+            <button type="button" id="openProfileBtn" class="profile-menu-btn">
+                👤 My Profile & Saved Sizes
+            </button>
+        </nav>
+    </aside>
+
     <header>
         <div class="nav-container">
-            <a href="index.html" class="brand-logo">FF</a> 
-            <nav class="nav-links">
-                <a href="#collection-section">Collection</a>
-            </nav>
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <button id="hamburgerBtn" class="hamburger-btn" aria-label="Open Navigation Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <a href="index.html" class="brand-logo">FF</a> 
+            </div>
             <div class="nav-actions">
                 <button class="btn-primary" onclick="openAddModal()">+ Add Clothing Item</button>
                 <button class="btn-outline" id="cartBtn">Bag (<span id="cartCount">0</span>)</button>
@@ -476,6 +604,59 @@
 
     <main class="collection-grid" id="collectionGrid"></main>
 
+    <!-- User Profile & Saved Measurements Modal -->
+    <div class="modal-backdrop" id="profileModal">
+        <div class="modal-card">
+            <button class="close-modal" id="closeProfileBtn">&times;</button>
+            
+            <h3 id="profileWelcomeHeader" style="margin-bottom: 6px;">Welcome, Guest</h3>
+            <p id="profileEmailSubtext" style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
+                Sign in to sync your sizing history across devices.
+            </p>
+
+            <div class="saved-data-card">
+                <h4 style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 8px;">
+                    Your Saved Body Measurements & Sizing
+                </h4>
+                
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <span class="stat-label">Rec. Size</span>
+                        <strong id="savedSizeDisplay" class="stat-value">M</strong>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Height</span>
+                        <strong id="savedHeightDisplay" class="stat-value">175 cm</strong>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Weight</span>
+                        <strong id="savedWeightDisplay" class="stat-value">70 kg</strong>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Chest/Bust</span>
+                        <strong id="savedChestDisplay" class="stat-value">96 cm</strong>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Waist</span>
+                        <strong id="savedWaistDisplay" class="stat-value">80 cm</strong>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Hips</span>
+                        <strong id="savedHipsDisplay" class="stat-value">98 cm</strong>
+                    </div>
+                    <div class="stat-box" style="grid-column: span 3;">
+                        <span class="stat-label">Inseam</span>
+                        <strong id="savedInseamDisplay" class="stat-value">81 cm</strong>
+                    </div>
+                </div>
+
+                <div id="savedHistoryList" style="margin-top: 12px; font-size: 13px; color: var(--text-muted);"></div>
+            </div>
+
+            <button id="logoutBtn" class="btn-outline" style="width: 100%;">Sign Out</button>
+        </div>
+    </div>
+
     <!-- Add New Clothing Item Modal -->
     <div class="modal-backdrop" id="addModal">
         <div class="modal-card">
@@ -490,7 +671,7 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="itemCategory">Collection Tag *</label>
-                        <input type="text" id="itemCategory" placeholder="e.g., Essentials, Drop 01" required>
+                        <input type="text" id="itemCategory" placeholder="e.g., Essentials, New York City" required>
                     </div>
                     <div class="form-group">
                         <label for="itemPrice">Price ($) *</label>
@@ -544,14 +725,20 @@
         </div>
     </div>
 
-    <script>  
-        
+    <script>
+        // Supabase configuration placeholder
+        const SUPABASE_URL = 'https://YOUR_SUPABASE_PROJECT_ID.supabase.co';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        const supabaseClient = (window.supabase && SUPABASE_URL !== 'https://YOUR_SUPABASE_PROJECT_ID.supabase.co')
+            ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+            : null;
+
         const defaultItems = [
             {
                 name: "The Layered Trench",
                 pieces: ["Floor-length black wool overcoat", "Asymmetric tuxedo shirt", "Pleated wide-leg charcoal trousers"],
                 fitProfile: "Tailored / Elongated",
-                category: "Outerwear",
+                category: "New York City",
                 price: 420,
                 imageUrl: "",
                 gradient: "linear-gradient(135deg, #2c2c2c 0%, #4a4a4a 100%)"
@@ -560,7 +747,7 @@
                 name: "The Monochrome Velvet Set",
                 pieces: ["Bottle-green velvet blazer", "High-waisted flared velvet trousers", "Mock-neck satin shell"],
                 fitProfile: "Hourglass / Sculpted",
-                category: "Evening",
+                category: "Atlanta",
                 price: 360,
                 imageUrl: "",
                 gradient: "linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%)"
@@ -569,7 +756,7 @@
                 name: "The Effortless Knit",
                 pieces: ["Open-weave oatmeal linen-cotton cardigan", "Ribbed racerback tank", "Barrel-leg raw denim jeans"],
                 fitProfile: "Slouchy / Architectural",
-                category: "Essentials",
+                category: "Los Angeles",
                 price: 275,
                 imageUrl: "",
                 gradient: "linear-gradient(135deg, #cbb9a8 0%, #e3d5ca 100%)"
@@ -580,6 +767,115 @@
         let currentFilter = 'All';
         let cartCount = 0;
         let selectedItem = null;
+
+        // Navigation & Profile Modal Controls
+        document.addEventListener('DOMContentLoaded', () => {
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            const sideDrawer = document.getElementById('sideDrawer');
+            const navOverlay = document.getElementById('navOverlay');
+            const closeDrawerBtn = document.getElementById('closeDrawerBtn');
+            const openProfileBtn = document.getElementById('openProfileBtn');
+            const profileModal = document.getElementById('profileModal');
+            const closeProfileBtn = document.getElementById('closeProfileBtn');
+
+            function openDrawer() {
+                sideDrawer?.classList.add('open');
+                navOverlay?.classList.add('active');
+            }
+
+            function closeDrawer() {
+                sideDrawer?.classList.remove('open');
+                navOverlay?.classList.remove('active');
+            }
+
+            hamburgerBtn?.addEventListener('click', openDrawer);
+            closeDrawerBtn?.addEventListener('click', closeDrawer);
+            navOverlay?.addEventListener('click', closeDrawer);
+
+            openProfileBtn?.addEventListener('click', async () => {
+                closeDrawer();
+                await loadUserProfileData();
+                profileModal?.style.display = 'flex';
+            });
+
+            closeProfileBtn?.addEventListener('click', () => {
+                profileModal?.style.display = 'none';
+            });
+
+            renderFilters();
+            renderCollection();
+        });
+
+        async function loadUserProfileData() {
+            let userName = 'Guest';
+            let userIdentifier = null;
+
+            if (supabaseClient) {
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                if (user) {
+                    userIdentifier = user.email || user.phone;
+                    userName = user.user_metadata?.full_name || userIdentifier.split('@')[0];
+                }
+            }
+
+            if (!userIdentifier) {
+                const localSession = JSON.parse(localStorage.getItem('auraUserSession') || 'null');
+                if (localSession && localSession.user) {
+                    userIdentifier = localSession.user;
+                    userName = localSession.name || userIdentifier.split('@')[0];
+                }
+            }
+
+            const formattedName = userName.charAt(0).toUpperCase() + userName.slice(1);
+            document.getElementById('profileWelcomeHeader').textContent = `Welcome, ${formattedName}`;
+            document.getElementById('profileEmailSubtext').textContent = userIdentifier 
+                ? `Signed in as ${userIdentifier}` 
+                : 'Sign in to sync your sizing history across devices.';
+
+            let savedData = JSON.parse(localStorage.getItem('ff_saved_sizing') || 'null');
+
+            if (supabaseClient && userIdentifier) {
+                const { data, error } = await supabaseClient
+                    .from('user_profiles')
+                    .select('*')
+                    .eq('identifier', userIdentifier)
+                    .single();
+
+                if (data && !error) {
+                    savedData = {
+                        recommended_size: data.recommended_size || 'M',
+                        height: data.height || 175,
+                        weight: data.weight || 70,
+                        chest: data.chest || 96,
+                        waist: data.waist || 80,
+                        hips: data.hips || 98,
+                        inseam: data.inseam || 81,
+                        last_item: data.last_item || 'Architectural Wool Blazer'
+                    };
+                }
+            }
+
+            if (savedData) {
+                document.getElementById('savedSizeDisplay').textContent = savedData.recommended_size || 'M';
+                document.getElementById('savedHeightDisplay').textContent = `${savedData.height || 175} cm`;
+                document.getElementById('savedWeightDisplay').textContent = `${savedData.weight || 70} kg`;
+                document.getElementById('savedChestDisplay').textContent = `${savedData.chest || 96} cm`;
+                document.getElementById('savedWaistDisplay').textContent = `${savedData.waist || 80} cm`;
+                document.getElementById('savedHipsDisplay').textContent = `${savedData.hips || 98} cm`;
+                document.getElementById('savedInseamDisplay').textContent = `${savedData.inseam || 81} cm`;
+                
+                document.getElementById('savedHistoryList').innerHTML = `
+                    <p><strong>Last Fitted Item:</strong> ${savedData.last_item || 'Custom Look'} — Size <strong>${savedData.recommended_size}</strong></p>
+                `;
+            }
+        }
+
+        document.getElementById('logoutBtn')?.addEventListener('click', async () => {
+            if (supabaseClient) await supabaseClient.auth.signOut();
+            localStorage.removeItem('auraUserSession');
+            document.getElementById('profileModal').style.display = 'none';
+            window.location.reload();
+        });
 
         function saveCollection() {
             localStorage.setItem('ff_collection_items', JSON.stringify(ffCollection));
@@ -727,40 +1023,6 @@
             document.getElementById('cartCount').textContent = cartCount;
             closeFitModal();
         }
-
-        renderFilters();
-        renderCollection();
     </script>
 </body>
-</html>
-
-      
-
-       
-           
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+</html>   
