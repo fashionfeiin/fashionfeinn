@@ -581,6 +581,7 @@
         <p>Browse the curated catalog or add your own custom pieces, photos, directly to your AI mannequin.</p> 
     </section>
 
+    <!-- FILTER BAR & COLLECTION GRID -->
     <div class="filter-bar" id="filterBar"></div>
     <main class="collection-grid" id="collectionGrid"></main>
 
@@ -694,51 +695,51 @@
 
     <script>
         const SUPABASE_URL = 'https://'uilzexhyrpzrwhitthow.supabase.co';   
-        const SUPABASE_ANON_KEY = 'https://'sb_publishable_dqsyUaS0Ba58WDCRSNz1dA_MpRUMHT1';  
+        const SUPABASE_ANON_KEY = 'sb_publishable_dqsyUaS0Ba58WDCRSNz1dA_MpRUMHT1';  
         const supabaseClient = (window.supabase && SUPABASE_URL !== 'https://YOUR_SUPABASE_PROJECT_ID.supabase.co')
-            ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)   
+            ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
             : null;
 
         const defaultItems = [
             {
                 id: "FF-DEFAULT-1",
                 name: "Green FF suit",
-                pieces: ["480gsm French terry hoodie", "Matching heavyweight sweatpants", "Embroidered FF chest crest"],
+                pieces:["480gsm French terry hoodie", "Matching heavyweight sweatpants", "Embroidered FF chest crest"],
                 fitProfile: "Relaxed / Boxy",
                 category: "Sweatsuits",
-                price: 240,
+                price: 100,
                 imageUrl: "",
                 gradient: "linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%)"
             },
             { 
                 id: "FF-DEFAULT-2",
                 name: "Pink FF suit",
-                pieces: ["Brushed cotton fleece hoodie", "Matching relaxed sweatpants", "Signature branding"],
+                pieces:["480gsm French terry hoodie", "Matching heavyweight sweatpants", "Embroidered FF chest crest"],
                 fitProfile: "Sculpted / Tapered",
                 category: "Sweatsuits",
-                price: 220,
+                price: 100,
                 imageUrl: "",
                 gradient: "linear-gradient(135deg, #d5b3c8 0%, #e8c5dc 100%)"
             },
             {
                 id: "FF-DEFAULT-3",
                 name: "Black FF suit",
-                pieces: ["Heavyweight black hoodie", "Matching tapered sweatpants", "Monochrome FF embroidery"],
+                pieces:["480gsm French terry hoodie", "Matching heavyweight sweatpants", "Embroidered FF chest crest"],
                 fitProfile: "Slouchy / Architectural",
                 category: "Sweatsuits",
-                price: 250,
+                price: 100,
                 imageUrl: "",
                 gradient: "linear-gradient(135deg, #1a1a1a 0%, #333333 100%)"
             }
         ];
 
-        let ffCollection = JSON.parse(localStorage.getItem('ff_collection_v3')) || defaultItems;
+        let ffCollection = JSON.parse(localStorage.getItem('ff_collection_v4')) || defaultItems;
         let currentFilter = 'All';
         let cartCount = 0;
         let selectedItem = null;
 
         function saveCollection() {
-            localStorage.setItem('ff_collection_v3', JSON.stringify(ffCollection));
+            localStorage.setItem('ff_collection_v4', JSON.stringify(ffCollection));
         }
 
         function renderFilters() {
