@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FF | Curated Collection Manager</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,400&display=swap" rel="stylesheet">
-    <style>
+    <style>   
         :root {
             --bg-primary: #faf9f6;
             --bg-card: #ffffff;
@@ -143,8 +143,8 @@
             padding: 0 24px 36px;
             max-width: 1280px;
             margin: 0 auto;
-        }
-
+        }  
+        
         .filter-btn {
             background-color: var(--bg-card);
             border: 1px solid var(--border-light);
@@ -407,18 +407,49 @@
             background: var(--text-main);
             color: #fff;
         }
-
-        .full-btn {
+        <style> 
+        .full-btn {  
+            .full-btn {
             width: 100%;
-            padding: 13px;
+            padding: 14px;
             background: var(--text-main);
             color: #fff;
             border: none;
             border-radius: 4px;
             font-weight: 600;
-            font-size: 14px;
             cursor: pointer;
         }
+
+        /* --- ADD YOUR NEW MEASUREMENTS GRID STYLES HERE --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .stat-box {
+            background: #fff;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid var(--border-light);
+            text-align: center;
+        }
+
+        .stat-label {
+            display: block;
+            font-size: 10px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            color: var(--text-main);
+            font-weight: bold;
+        }  
     </style>
 </head>
 <body>
@@ -513,7 +544,8 @@
         </div>
     </div>
 
-    <script>
+    <script>  
+        
         const defaultItems = [
             {
                 name: "The Layered Trench",
