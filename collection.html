@@ -62,23 +62,6 @@
             color: var(--text-main);
         }
 
-        .nav-links {
-            display: flex;
-            gap: 28px;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--text-muted);
-            font-size: 14px;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-
-        .nav-links a:hover {
-            color: var(--text-main);
-        }
-
         .nav-actions {
             display: flex;
             gap: 12px;
@@ -600,8 +583,10 @@
         <p>Browse the curated catalog or add your own custom pieces, photos, directly to your AI mannequin.</p> 
     </section>
 
+    <!-- FILTER BAR -->
     <div class="filter-bar" id="filterBar"></div>
 
+    <!-- PRODUCT COLLECTION GRID -->
     <main class="collection-grid" id="collectionGrid"></main>
 
     <!-- User Profile & Saved Measurements Modal -->
@@ -726,7 +711,6 @@
     </div>
 
     <script>
-        // Supabase configuration placeholder
         const SUPABASE_URL = 'https://YOUR_SUPABASE_PROJECT_ID.supabase.co';
         const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
         const supabaseClient = (window.supabase && SUPABASE_URL !== 'https://YOUR_SUPABASE_PROJECT_ID.supabase.co')
@@ -768,7 +752,6 @@
         let cartCount = 0;
         let selectedItem = null;
 
-        // Navigation & Profile Modal Controls
         document.addEventListener('DOMContentLoaded', () => {
             const hamburgerBtn = document.getElementById('hamburgerBtn');
             const sideDrawer = document.getElementById('sideDrawer');
@@ -795,11 +778,11 @@
             openProfileBtn?.addEventListener('click', async () => {
                 closeDrawer();
                 await loadUserProfileData();
-                profileModal?.style.display = 'flex';
+                profileModal.style.display = 'flex';
             });
 
             closeProfileBtn?.addEventListener('click', () => {
-                profileModal?.style.display = 'none';
+                profileModal.style.display = 'none';
             });
 
             renderFilters();
@@ -961,7 +944,7 @@
                 const newItem = {
                     id: 'FF-' + Date.now(), 
                     name,
-                    pieces,
+                        pieces,
                     fitProfile,
                     category,
                     price,
@@ -1025,4 +1008,4 @@
         }
     </script>
 </body>
-</html>   
+</html> 
